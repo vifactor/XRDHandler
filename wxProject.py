@@ -12,6 +12,31 @@ from scipy.interpolate import griddata
 class MplCanvasFrame(wx.Frame):
     def __init__(self):
         wx.Frame.__init__(self, None, wx.ID_ANY, size=(600, 400), title='Matplotlib Figure with Navigation Toolbar')
+        
+        #setting up a status bar in the bottom of the window
+        self.CreateStatusBar()
+        
+        #setting up menu
+        filemenu = wx.Menu()
+        menuOpen = filemenu.Append(wx.ID_OPEN, "&Open", "Open a file to edit")
+        menuExit = filemenu.Append(wx.ID_EXIT, "E&xit", "Terminate the program")
+        
+        helpmenu = wx.Menu()
+        menuAbout = helpmenu.Append(wx.ID_ABOUT, "&About", "Information about this program")
+        
+        #creating the menubar
+        menuBar = wx.MenuBar()
+        menuBar.Append(filemenu, "&File")
+        menuBar.Append(helpmenu, "&Help")
+        
+        self.SetMenuBar(menuBar) # Adding the MenuBar to the Frame content
+        
+        
+        #Events
+        #self.Bind(wx.EVT_MENU, self.OnOpen, menuOpen)
+        #self.Bind(wx.EVT_MENU, self.OnExit, menuExit)
+        #self.Bind(wx.EVT_MENU, self.OnAbout, menuAbout)
+        
         # make up some randomly distributed data
         seed(1234)
         npts = 200
