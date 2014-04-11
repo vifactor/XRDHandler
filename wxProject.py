@@ -11,6 +11,9 @@ from scipy.interpolate import griddata
 
 class MplCanvasFrame(wx.Frame):
     def __init__(self):
+        #directory from which to read a file
+        self.dirname = ''
+        
         wx.Frame.__init__(self, None, wx.ID_ANY, size=(600, 400), title='Matplotlib Figure with Navigation Toolbar')
         
         #setting up a status bar in the bottom of the window
@@ -33,9 +36,9 @@ class MplCanvasFrame(wx.Frame):
         
         
         #Events
-        #self.Bind(wx.EVT_MENU, self.OnOpen, menuOpen)
-        #self.Bind(wx.EVT_MENU, self.OnExit, menuExit)
-        #self.Bind(wx.EVT_MENU, self.OnAbout, menuAbout)
+        self.Bind(wx.EVT_MENU, self.OnOpen, menuOpen)
+        self.Bind(wx.EVT_MENU, self.OnExit, menuExit)
+        self.Bind(wx.EVT_MENU, self.OnAbout, menuAbout)
         
         # make up some randomly distributed data
         seed(1234)
@@ -80,6 +83,25 @@ class MplCanvasFrame(wx.Frame):
         # sets the window to have the given layout sizer
         self.SetSizer(self.sizer)
         self.Fit()
+    
+    def OnOpen(self, evt):
+        """Open a file"""
+        dlg = wx.FileDialog(self, "Choose a file", self.dirname, "", "*.*", wx.OPEN)
+        if dlg.ShowModal() == wx.ID_OK:
+            self.filename = dlg.GetFilename()
+            self.dirname = dlg.GetDirectory()
+            
+            self.SetStatusText(self.filename)
+        dlg.Destroy()
+    
+    def OnExit(self, evt):
+        self.Close(True)
+    
+    def OnAbout(self, evt):
+        #Create a message dialog box
+        dlg = wx.MessageDialog(self, "VXRD v0.1", "Reciprocal space map analyzer", wx.OK)
+        dlg.ShowModal()
+        dlg.Destroy()
         
         
 class MplApp(wx.App):
