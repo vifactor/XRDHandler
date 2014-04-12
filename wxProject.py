@@ -40,27 +40,23 @@ class MplCanvasFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnExit, menuExit)
         self.Bind(wx.EVT_MENU, self.OnAbout, menuAbout)
         
-        # make up some randomly distributed data
-        seed(1234)
-        npts = 200
-        x = uniform(-2,2,npts)
-        y = uniform(-2,2,npts)
-        z = x*np.exp(-x**2-y**2)
-        # define grid.
-        xi = np.linspace(-2.1,2.1,100)
-        yi = np.linspace(-2.1,2.1,100)
-        # grid the data.
-        zi = griddata((x, y), z, (xi[None,:], yi[:,None]), method='cubic')
-
+        #Dummy DataReader
+        dr = DataReader("test.txt")
+        
+        # Map Data Handler
+        mdh = MapGridder(sampling = 60, method = 'cubic', fill_value = 0)
+        mdh.setup(dr.get_points())
+        xg, yg, zg = mdh.get_map()
+        
         # matplotlib figure
         self.figure = Figure()
         self.axes = self.figure.add_subplot(111)
         # contour the gridded data, plotting dots at the randomly spaced data points.
-        self.axes.contour(xi,yi,zi,15,linewidths=0.5,colors='k')
-        cs = self.axes.contourf(xi,yi,zi,15, cmap=cm.jet)
+        self.axes.contour(xg,yg,zg,15,linewidths=0.5,colors='k')
+        cs = self.axes.contourf(xg,yg,zg,15, cmap=cm.jet)
         self.figure.colorbar(cs) # draw colorbar
         # plot data points.
-        self.axes.scatter(x,y,marker='o',c='b',s=5)
+        #self.axes.scatter(x, y, marker='o',c='b',s=5)
         self.axes.set_xlim(-2,2)
         self.axes.set_ylim(-2,2)
         
@@ -114,6 +110,73 @@ class MplApp(wx.App):
         frame.Show(True)
         #return True to continue processing
         return True
+
+class DataReader:
+    def __init__(self, filename):
+        self.points = []
+        
+        #temporary solution
+        npts = 50
+        x = uniform(-2,2,npts)
+        y = uniform(-2,2,npts)
+        z = x**2 * np.exp(-x**2-y**2)
+        for i in range(npts):
+            self.points.append([x[i], y[i], z[i]])
+        
+        
+    def get_points(self):
+        return self.points
+
+class MapGridder:
+    def __init__(self, sampling, method, fill_value):
+        self.raw_x = []
+        self.raw_y = []
+        self.raw_z = []
+        
+        self.xl = None
+        self.xu = None
+        self.yl = None
+        self.yu = None
+        
+        self.sampling = sampling
+        self.grid_method = method
+        self.fill_value = fill_value
+        
+    def setup(self, points):
+        self.raw_x = []
+        self.raw_y = []
+        self.raw_z = []
+
+        for point in points:
+            self.raw_x.append(point[0])
+            self.raw_y.append(point[1])
+            self.raw_z.append(point[2])
+            
+        self.xl = min(self.raw_x)
+        self.xu = max(self.raw_x)
+        self.yl = min(self.raw_y)
+        self.yu = max(self.raw_y)
+            
+    def set_xlim(self, xl, xu):
+        self.xl = xl
+        self.xu = xu
+        
+    def set_ylim(self, yl, yu):
+        self.yl = yl
+        self.yu = yu
+        
+    def get_map(self):
+        x = np.linspace(self.xl, self.xu, self.sampling)
+        y = np.linspace(self.yl, self.yu, self.sampling)
+        
+        #Prepare the gridded map
+        z = griddata((self.raw_x, self.raw_y), self.raw_z, (x[None,:], y[:,None]), method = self.grid_method, fill_value = self.fill_value )
+        # The following is not strictly essential, but it will eliminate
+        # a warning.  Comment it out to see the warning.
+        #z = np.ma.masked_where(z<=0, z)
+        
+        return (x, y, z)
+
 
 #our wxApp class
 mplapp = MplApp(False)
