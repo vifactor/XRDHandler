@@ -83,26 +83,13 @@ class MainFrame(wx.Frame):
         self.om,self.tt,self.psd = xu.io.getxrdml_map(os.path.join(self.dirname + os.sep, self.filename))
         
         self.mplPanel.drawAngularMap(self.om,self.tt,self.psd)
-        '''
-        gridder = xu.Gridder2D(150,150)
-        gridder(self.om,self.tt, self.psd)
-        INT = xu.maplog(gridder.data.transpose(),6,0)
-
-        #clear axes from previous drawing
-        self.mplPanel.figure.clf()
-        #add subplot to the figure
-        self.mplPanel.axes = self.mplPanel.figure.add_subplot(111)
-        cf = self.mplPanel.axes.contourf(gridder.xaxis, gridder.yaxis,INT,100,extend='min')
-        self.mplPanel.figure.colorbar(cf, ax = self.mplPanel.axes) # draw colorbar
-        self.mplPanel.figure.canvas.draw()
-        '''
 
     def OnExit(self, event):  # wxGlade: MainFrame.<event_handler>
         self.Close(True)
 
     def OnAbout(self, event):  # wxGlade: MainFrame.<event_handler>
         #Create a message dialog box
-        dlg = wx.MessageDialog(self, "RSM Handler v0.3", "XRD", wx.OK)
+        dlg = wx.MessageDialog(self, "RSM Handler v0.4", "XRD", wx.OK)
         dlg.ShowModal()
         dlg.Destroy()
         

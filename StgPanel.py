@@ -41,9 +41,9 @@ class StgPanel(wx.Panel):
         sp = self.GetParent()
         frame = sp.GetParent()
         
-        print self.viewMode.GetSelection()
-        print self.viewMode.GetCurrentSelection()
-        print "Event handler `OnViewModeSelect' not implemented"
-        event.Skip()
+        if self.viewMode.GetCurrentSelection() == 1:
+            frame.mplPanel.drawReciprocalMap(frame.om, frame.tt, frame.psd)
+        else:
+            frame.mplPanel.drawAngularMap(frame.om, frame.tt, frame.psd)
 
 # end of class StgPanel

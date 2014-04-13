@@ -66,6 +66,22 @@ class MplPanel(wx.Panel):
         self.figure.canvas.draw()
 
     def drawReciprocalMap(self, om, tt, psd):
-        pass
+        Si = xu.materials.Si
+        hxrd = xu.HXRD(Si.Q(1,1,0),Si.Q(0,0,1))
+        [qx,qy,qz] = hxrd.Ang2Q(om,tt,delta=[0.0, 0.0])
+        
+        gridder = xu.Gridder2D(100,100)
+        gridder(qy,qz,psd)
+        INT = xu.maplog(gridder.data.transpose(),6,0)
+        
+        #clear axes from previous drawing
+        self.figure.clf()
+        #add subplot to the figure
+        self.axes = self.figure.add_subplot(111)
+        cf = self.axes.contourf(gridder.xaxis, gridder.yaxis,INT,100,extend='min')
+        self.axes.set_xlabel(r'$Q_{[110]}$ ($\AA^{-1}$)')
+        self.axes.set_ylabel(r'$Q_{[001]}$ ($\AA^{-1}$)')
+        self.figure.colorbar(cf, ax = self.axes) # draw colorbar
+        self.figure.canvas.draw()
 
 # end of class MplPanel
