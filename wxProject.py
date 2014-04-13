@@ -44,27 +44,14 @@ class MplCanvasFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnExit, menuExit)
         self.Bind(wx.EVT_MENU, self.OnAbout, menuAbout)
         
-        # matplotlib figure
-        self.figure = Figure()
-        # initialize the FigureCanvas, mapping the figure to the WxAgg backend
-        self.canvas = FigureCanvas(self, wx.ID_ANY, self.figure)
+        #creates SplitterWindow object within the wxFrame containing a panel on top and bottom
+        self.sp = wx.SplitterWindow(self)
         
-        # Box sizer for layout
-        self.sizer = wx.BoxSizer(wx.VERTICAL)
-        self.sizer.Add(self.canvas, 1, wx.LEFT | wx.TOP | wx.EXPAND)
+        self.mplPanel = MplPanel(self.sp)
+        self.stgPanel = wx.Panel(self.sp, style = wx.SUNKEN_BORDER)
         
-        # Navigation Toolbar
-        self.toolbar = NavigationToolbar2Wx(self.canvas)
-        #needed to support Windows systems
-        self.toolbar.Realize()
-        # add it to the sizer
-        self.sizer.Add(self.toolbar, 0, wx.LEFT | wx.EXPAND)
-        # show toolbar
-        self.toolbar.Show()
-        
-        # sets the window to have the given layout sizer
-        self.SetSizer(self.sizer)
-        self.Fit()
+        self.sp.SplitVertically(self.mplPanel, self.stgPanel, 500)
+
     
     def OnOpen(self, evt):
         """Open a file"""
@@ -82,22 +69,48 @@ class MplCanvasFrame(wx.Frame):
         INT = xu.maplog(gridder.data.transpose(),6,0)
 
         #clear axes from previous drawing
-        self.figure.clf()
+        self.mplPanel.figure.clf()
         #add subplot to the figure
-        self.axes = self.figure.add_subplot(111)
-        cf = self.axes.contourf(gridder.xaxis, gridder.yaxis,INT,100,extend='min')
-        self.figure.colorbar(cf, ax = self.axes) # draw colorbar
-        self.figure.canvas.draw()
+        self.mplPanel.axes = self.mplPanel.figure.add_subplot(111)
+        cf = self.mplPanel.axes.contourf(gridder.xaxis, gridder.yaxis,INT,100,extend='min')
+        self.mplPanel.figure.colorbar(cf, ax = self.mplPanel.axes) # draw colorbar
+        self.mplPanel.figure.canvas.draw()
         
     def OnExit(self, evt):
         self.Close(True)
     
     def OnAbout(self, evt):
         #Create a message dialog box
-        dlg = wx.MessageDialog(self, "VXRD v0.2", "Reciprocal space map analyzer", wx.OK)
+        dlg = wx.MessageDialog(self, "VXRD v0.21", "Reciprocal space map analyzer", wx.OK)
         dlg.ShowModal()
         dlg.Destroy()
+
+class MplPanel(wx.Panel):
+    def __init__(self, parent):
+        wx.Panel.__init__(self, parent, -1, size = (50, 50))
+        # matplotlib figure
+        self.figure = Figure()
+        # initialize the FigureCanvas, mapping the figure to the WxAgg backend
+        self.canvas = FigureCanvas(self, wx.ID_ANY, self.figure)
+        # Box sizer for layout
+        self.sizer = wx.BoxSizer(wx.VERTICAL)
+        self.sizer.Add(self.canvas, 1, wx.LEFT | wx.TOP | wx.EXPAND)
         
+        # Navigation Toolbar
+        self.toolbar = NavigationToolbar2Wx(self.canvas)
+        #needed to support Windows systems
+        self.toolbar.Realize()
+        # add it to the sizer
+        self.sizer.Add(self.toolbar, 0, wx.LEFT | wx.EXPAND)
+        # show toolbar
+        self.toolbar.Show()
+        
+        # sets the window to have the given layout sizer
+        self.SetSizer(self.sizer)
+        self.Fit()
+
+class StgPanel(wx.Panel):
+    pass
         
 class MplApp(wx.App):
     def OnInit(self):
