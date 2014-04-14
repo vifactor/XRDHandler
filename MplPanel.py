@@ -46,8 +46,8 @@ class MplPanel(wx.Panel):
     def __do_layout(self):
         # begin wxGlade: MplPanel.__do_layout
         sizer_2 = wx.BoxSizer(wx.VERTICAL)
-        sizer_2.Add(self.canvas, 1, wx.EXPAND, 0)
-        sizer_2.Add(self.toolbar, 0, 0, 0)
+        sizer_2.Add(self.canvas, 1, wx.ALL | wx.EXPAND, 0)
+        sizer_2.Add(self.toolbar, 0, wx.BOTTOM | wx.EXPAND, 5)
         self.SetSizer(sizer_2)
         sizer_2.Fit(self)
         # end wxGlade

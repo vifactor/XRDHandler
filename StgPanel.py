@@ -32,14 +32,13 @@ class StgPanel(wx.Panel):
     def __do_layout(self):
         # begin wxGlade: StgPanel.__do_layout
         sizer_3 = wx.BoxSizer(wx.VERTICAL)
-        sizer_3.Add(self.viewMode, 0, 0, 0)
+        sizer_3.Add(self.viewMode, 0, 0, 5)
         self.SetSizer(sizer_3)
         sizer_3.Fit(self)
         # end wxGlade
 
     def OnViewModeSelect(self, event):  # wxGlade: StgPanel.<event_handler>
-        sp = self.GetParent()
-        frame = sp.GetParent()
+        frame = self.GetParent()
         
         if self.viewMode.GetCurrentSelection() == 1:
             frame.mplPanel.drawReciprocalMap(frame.om, frame.tt, frame.psd)

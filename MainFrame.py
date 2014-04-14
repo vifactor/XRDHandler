@@ -22,9 +22,6 @@ class MainFrame(wx.Frame):
         # begin wxGlade: MainFrame.__init__
         kwds["style"] = wx.CAPTION | wx.CLOSE_BOX | wx.MINIMIZE_BOX | wx.MAXIMIZE | wx.MAXIMIZE_BOX | wx.SYSTEM_MENU | wx.RESIZE_BORDER | wx.CLIP_CHILDREN
         wx.Frame.__init__(self, *args, **kwds)
-        self.sp = wx.SplitterWindow(self, -1, style=wx.SP_3D | wx.SP_BORDER)
-        self.mplPanel = MplPanel(self.sp, wx.ID_ANY)
-        self.stgPanel = StgPanel(self.sp, wx.ID_ANY)
         
         # Menu Bar
         self.menubar = wx.MenuBar()
@@ -41,6 +38,8 @@ class MainFrame(wx.Frame):
         self.SetMenuBar(self.menubar)
         # Menu Bar end
         self.statusbar = self.CreateStatusBar(1, 0)
+        self.mplPanel = MplPanel(self, wx.ID_ANY)
+        self.stgPanel = StgPanel(self, wx.ID_ANY)
 
         self.__set_properties()
         self.__do_layout()
@@ -62,9 +61,9 @@ class MainFrame(wx.Frame):
 
     def __do_layout(self):
         # begin wxGlade: MainFrame.__do_layout
-        sizer_1 = wx.BoxSizer(wx.VERTICAL)
-        self.sp.SplitVertically(self.mplPanel, self.stgPanel)
-        sizer_1.Add(self.sp, 1, wx.EXPAND, 0)
+        sizer_1 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_1.Add(self.mplPanel, 1, wx.ALL | wx.EXPAND, 5)
+        sizer_1.Add(self.stgPanel, 0, wx.ALL, 5)
         self.SetSizer(sizer_1)
         sizer_1.Fit(self)
         self.Layout()
