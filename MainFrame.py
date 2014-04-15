@@ -19,6 +19,9 @@ from MplPanel import MplPanel
 
 class MainFrame(wx.Frame):
     def __init__(self, *args, **kwds):
+        self.dirname = ""
+        self.filename = ""
+
         # begin wxGlade: MainFrame.__init__
         kwds["style"] = wx.CAPTION | wx.CLOSE_BOX | wx.MINIMIZE_BOX | wx.MAXIMIZE | wx.MAXIMIZE_BOX | wx.SYSTEM_MENU | wx.RESIZE_BORDER | wx.CLIP_CHILDREN
         wx.Frame.__init__(self, *args, **kwds)
@@ -80,11 +83,13 @@ class MainFrame(wx.Frame):
             self.dirname = dlg.GetDirectory()
             
             self.SetStatusText(self.filename)
+
+            self.om,self.tt,self.psd = xu.io.getxrdml_map(os.path.join(self.dirname + os.sep, self.filename))
+
+            self.mplPanel.drawAngularMap(self.om,self.tt,self.psd)
+            
+        #destroy dialog
         dlg.Destroy()
-        
-        self.om,self.tt,self.psd = xu.io.getxrdml_map(os.path.join(self.dirname + os.sep, self.filename))
-        
-        self.mplPanel.drawAngularMap(self.om,self.tt,self.psd)
 
     def OnExit(self, event):  # wxGlade: MainFrame.<event_handler>
         self.Close(True)
@@ -96,13 +101,38 @@ class MainFrame(wx.Frame):
         dlg.Destroy()
 
     def onSave(self, event):  # wxGlade: MainFrame.<event_handler>
-        print "Event handler `onSave' not implemented"
+        dlg = wx.FileDialog(self, "Save QFit file", self.dirname, "",
+                            "QFit files (*.qfit)|*.qfit", wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
+        if dlg.ShowModal() == wx.ID_OK:
+            # save content in the file
+            # this can be done with wxPython output streams:
+            path = dlg.GetPath()
+            print path
+            self.saveFitDataFile(path)
+
         print self.mplPanel.figure.gca().get_xlim()
         print self.mplPanel.figure.gca().get_ylim()
         event.Skip()
 
     def saveFitDataFile(self, path):
-        pass
+        if self.filename:
+            fout = open(path, "w")
+            
+            fout.write("#File created by RSM Handler from an experimental data\n")
+            fout.write("#can be used for numerical fitting\n")
+            fout.write("#[qx]\t[qz]\t[intensity]\n")
+            
+            Si = xu.materials.Si
+            hxrd = xu.HXRD(Si.Q(1,1,0),Si.Q(0,0,1))
+            [qx,qy,qz] = hxrd.Ang2Q(self.om,self.tt,delta=[0.0, 0.0])
+            
+            #TODO scale to substrate
+            for i in range(len(self.psd)):
+                fout.write('{0}\t{1}\t{2}\n'.format(qy[i], qz[i], self.psd[i]))
+            
+            fout.close()
+        else:
+            print "No experimental data"
 
     def saveGpltDataFile(self, path, mode):
         pass
