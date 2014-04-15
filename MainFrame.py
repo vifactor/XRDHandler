@@ -28,6 +28,8 @@ class MainFrame(wx.Frame):
         wxglade_tmp_menu = wx.Menu()
         self.Open = wx.MenuItem(wxglade_tmp_menu, wx.ID_OPEN, "&Open", "Open a file to load", wx.ITEM_NORMAL)
         wxglade_tmp_menu.AppendItem(self.Open)
+        self.Save = wx.MenuItem(wxglade_tmp_menu, wx.ID_SAVE, "&Save", "Save data file", wx.ITEM_NORMAL)
+        wxglade_tmp_menu.AppendItem(self.Save)
         self.Exit = wx.MenuItem(wxglade_tmp_menu, wx.ID_EXIT, "E&xit", "Terminate the program", wx.ITEM_NORMAL)
         wxglade_tmp_menu.AppendItem(self.Exit)
         self.menubar.Append(wxglade_tmp_menu, "File")
@@ -45,6 +47,7 @@ class MainFrame(wx.Frame):
         self.__do_layout()
 
         self.Bind(wx.EVT_MENU, self.OnOpen, self.Open)
+        self.Bind(wx.EVT_MENU, self.onSave, self.Save)
         self.Bind(wx.EVT_MENU, self.OnExit, self.Exit)
         self.Bind(wx.EVT_MENU, self.OnAbout, self.About)
         # end wxGlade
@@ -91,6 +94,17 @@ class MainFrame(wx.Frame):
         dlg = wx.MessageDialog(self, "RSM Handler v0.4", "XRD", wx.OK)
         dlg.ShowModal()
         dlg.Destroy()
-        
+
+    def onSave(self, event):  # wxGlade: MainFrame.<event_handler>
+        print "Event handler `onSave' not implemented"
+        print self.mplPanel.figure.gca().get_xlim()
+        print self.mplPanel.figure.gca().get_ylim()
+        event.Skip()
+
+    def saveFitDataFile(self, path):
+        pass
+
+    def saveGpltDataFile(self, path, mode):
+        pass
 
 # end of class MainFrame
