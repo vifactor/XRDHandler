@@ -37,6 +37,10 @@ class MplPanel(wx.Panel):
         self.toolbar.Realize()
         # show toolbar
         self.toolbar.Show()
+        
+        #center of the map
+        self.x0 = None
+        self.y0 = None
 
     def __set_properties(self):
         # begin wxGlade: MplPanel.__set_properties
@@ -61,14 +65,22 @@ class MplPanel(wx.Panel):
         self.figure.clf()
         #add subplot to the figure
         self.axes = self.figure.add_subplot(111)
+        #draw rsm
         cf = self.axes.contourf(gridder.xaxis, gridder.yaxis,INT,100,extend='min')
-        self.figure.colorbar(cf, ax = self.axes) # draw colorbar
+        #draw center
+        self.axes.scatter(self.x0, self.y0, s = 100, marker = 'x', c = 'w')
+        #annotate axes
+        self.axes.set_xlabel(r'$\omega$ (deg)')
+        self.axes.set_ylabel(r'$2\theta$ (deg)')
+        # draw colorbar
+        self.figure.colorbar(cf, ax = self.axes) 
         self.figure.canvas.draw()
 
     def drawReciprocalMap(self, om, tt, psd):
         Si = xu.materials.Si
         hxrd = xu.HXRD(Si.Q(1,1,0),Si.Q(0,0,1))
         [qx,qy,qz] = hxrd.Ang2Q(om,tt,delta=[0.0, 0.0])
+        [q0x, q0y, q0z] = hxrd.Ang2Q(self.x0,self.y0,delta=[0.0, 0.0])
         
         gridder = xu.Gridder2D(100,100)
         gridder(qy,qz,psd)
@@ -78,9 +90,16 @@ class MplPanel(wx.Panel):
         self.figure.clf()
         #add subplot to the figure
         self.axes = self.figure.add_subplot(111)
+        #draw rsm
         cf = self.axes.contourf(gridder.xaxis, gridder.yaxis,INT,100,extend='min')
+        #draw center
+        self.axes.scatter(q0y, q0z, s = 100, marker = 'x', c = 'w')
+        
+        #annotate axis
         self.axes.set_xlabel(r'$Q_{[110]}$ ($\AA^{-1}$)')
         self.axes.set_ylabel(r'$Q_{[001]}$ ($\AA^{-1}$)')
+        
+        # draw colorbar
         self.figure.colorbar(cf, ax = self.axes) # draw colorbar
         self.figure.canvas.draw()
 

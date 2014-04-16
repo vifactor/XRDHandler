@@ -76,7 +76,7 @@ class StgPanel(wx.Panel):
     def OnViewModeSelect(self, event):  # wxGlade: StgPanel.<event_handler>
         frame = self.GetParent()
         
-        if self.viewMode.GetCurrentSelection() == 1:
+        if self.cbMode.GetCurrentSelection() == 1:
             frame.mplPanel.drawReciprocalMap(frame.om, frame.tt, frame.psd)
         else:
             frame.mplPanel.drawAngularMap(frame.om, frame.tt, frame.psd)

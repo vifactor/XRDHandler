@@ -77,7 +77,7 @@ class MainFrame(wx.Frame):
 
     def OnOpen(self, event):  # wxGlade: MainFrame.<event_handler>
         """Open a file"""
-        dlg = wx.FileDialog(self, "Choose a file", "", "", "*.xrdml", wx.OPEN)
+        dlg = wx.FileDialog(self, "Choose a file", "", "/home/dreamcatcher/Research/Como/XRD/9417/", "*.xrdml", wx.OPEN)
         if dlg.ShowModal() == wx.ID_OK:
             self.filename = dlg.GetFilename()
             self.dirname = dlg.GetDirectory()
@@ -86,6 +86,10 @@ class MainFrame(wx.Frame):
 
             self.om,self.tt,self.psd = xu.io.getxrdml_map(os.path.join(self.dirname + os.sep, self.filename))
 
+            #initially central point is in the center of the map
+            self.mplPanel.x0 = (max(self.om) + min(self.om))/2
+            self.mplPanel.y0 = (max(self.tt) + min(self.tt))/2
+            #draw the angular map
             self.mplPanel.drawAngularMap(self.om,self.tt,self.psd)
             
         #destroy dialog
@@ -96,7 +100,7 @@ class MainFrame(wx.Frame):
 
     def OnAbout(self, event):  # wxGlade: MainFrame.<event_handler>
         #Create a message dialog box
-        dlg = wx.MessageDialog(self, "RSM Handler v0.4", "XRD", wx.OK)
+        dlg = wx.MessageDialog(self, "RSM Handler v0.42", "XRD", wx.OK)
         dlg.ShowModal()
         dlg.Destroy()
 
