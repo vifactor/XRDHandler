@@ -115,7 +115,7 @@ class MainFrame(wx.Frame):
 
     def OnAbout(self, event):  # wxGlade: MainFrame.<event_handler>
         #Create a message dialog box
-        dlg = wx.MessageDialog(self, "RSM Handler v0.42", "XRD", wx.OK)
+        dlg = wx.MessageDialog(self, "RSM Handler v0.43", "XRD", wx.OK)
         dlg.ShowModal()
         dlg.Destroy()
 
@@ -129,7 +129,7 @@ class MainFrame(wx.Frame):
             print path
             self.saveFitDataFile(path)
         
-        #TODO save date only in xylimits
+        #TODO save data only in xylimits
 
         event.Skip()
 
