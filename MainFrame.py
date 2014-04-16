@@ -89,8 +89,23 @@ class MainFrame(wx.Frame):
             #initially central point is in the center of the map
             self.mplPanel.x0 = (max(self.om) + min(self.om))/2
             self.mplPanel.y0 = (max(self.tt) + min(self.tt))/2
+            
+            #print central point in the corresponding TextControls
+            self.stgPanel.tcX0.SetValue("%s" % self.mplPanel.x0)
+            self.stgPanel.tcY0.SetValue("%s" % self.mplPanel.y0)
+
             #draw the angular map
             self.mplPanel.drawAngularMap(self.om,self.tt,self.psd)
+            
+            #initial figure ranges are limits of axes
+            xmin, xmax = self.mplPanel.figure.gca().get_xlim()
+            ymin, ymax = self.mplPanel.figure.gca().get_ylim()
+
+            #print figure ranges in the corresponding TextControls
+            self.stgPanel.tcXMin.SetValue("%s" % xmin)
+            self.stgPanel.tcXMax.SetValue("%s" % xmax)
+            self.stgPanel.tcYMin.SetValue("%s" % ymin)
+            self.stgPanel.tcYMax.SetValue("%s" % ymax)
             
         #destroy dialog
         dlg.Destroy()
@@ -113,7 +128,8 @@ class MainFrame(wx.Frame):
             path = dlg.GetPath()
             print path
             self.saveFitDataFile(path)
-
+        
+        #TODO
         print self.mplPanel.figure.gca().get_xlim()
         print self.mplPanel.figure.gca().get_ylim()
         event.Skip()
