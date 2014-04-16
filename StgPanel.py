@@ -16,23 +16,59 @@ class StgPanel(wx.Panel):
         # begin wxGlade: StgPanel.__init__
         kwds["style"] = wx.TAB_TRAVERSAL
         wx.Panel.__init__(self, *args, **kwds)
-        self.viewMode = wx.ComboBox(self, -1, choices=["Angles", "Reciprocal points"], style=wx.CB_DROPDOWN | wx.CB_READONLY)
+        self.cbMode = wx.ComboBox(self, -1, choices=["Angles", "Reciprocal points (Q)", "Reciprocal points (q)"], style=wx.CB_DROPDOWN | wx.CB_READONLY)
+        self.stCenterOn = wx.StaticText(self, -1, "Center on")
+        self.tcX0 = wx.TextCtrl(self, -1, "")
+        self.tcY0 = wx.TextCtrl(self, -1, "")
+        self.stRange = wx.StaticText(self, -1, "Ranges")
+        self.stXRange = wx.StaticText(self, -1, "X range")
+        self.tcXMin = wx.TextCtrl(self, -1, "")
+        self.tcXMax = wx.TextCtrl(self, -1, "")
+        self.stYRange = wx.StaticText(self, -1, "Y range")
+        self.tcYMin = wx.TextCtrl(self, -1, "")
+        self.tcYMax = wx.TextCtrl(self, -1, "")
 
         self.__set_properties()
         self.__do_layout()
 
-        self.Bind(wx.EVT_COMBOBOX, self.OnViewModeSelect, self.viewMode)
+        self.Bind(wx.EVT_COMBOBOX, self.OnViewModeSelect, self.cbMode)
+        self.Bind(wx.EVT_TEXT_ENTER, self.OnX0Change, self.tcX0)
+        self.Bind(wx.EVT_TEXT_ENTER, self.OnY0Change, self.tcY0)
+        self.Bind(wx.EVT_TEXT_ENTER, self.OnXMinChange, self.tcXMin)
+        self.Bind(wx.EVT_TEXT_ENTER, self.OnXMaxChange, self.tcXMax)
+        self.Bind(wx.EVT_TEXT_ENTER, self.OnYMinChange, self.tcYMin)
+        self.Bind(wx.EVT_TEXT_ENTER, self.OnYMaxChange, self.tcYMax)
         # end wxGlade
 
     def __set_properties(self):
         # begin wxGlade: StgPanel.__set_properties
-        self.viewMode.SetSelection(0)
+        self.cbMode.SetSelection(0)
         # end wxGlade
 
     def __do_layout(self):
         # begin wxGlade: StgPanel.__do_layout
         sizer_3 = wx.BoxSizer(wx.VERTICAL)
-        sizer_3.Add(self.viewMode, 0, 0, 5)
+        sizer_5 = wx.BoxSizer(wx.VERTICAL)
+        sizer_8 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_7 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_4 = wx.BoxSizer(wx.VERTICAL)
+        sizer_6 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_3.Add(self.cbMode, 0, 0, 5)
+        sizer_4.Add(self.stCenterOn, 0, wx.LEFT | wx.EXPAND, 0)
+        sizer_6.Add(self.tcX0, 0, 0, 0)
+        sizer_6.Add(self.tcY0, 0, 0, 0)
+        sizer_4.Add(sizer_6, 0, wx.EXPAND, 0)
+        sizer_3.Add(sizer_4, 0, wx.EXPAND, 0)
+        sizer_5.Add(self.stRange, 0, wx.LEFT | wx.EXPAND, 0)
+        sizer_7.Add(self.stXRange, 0, wx.ALIGN_CENTER_VERTICAL, 0)
+        sizer_7.Add(self.tcXMin, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL, 0)
+        sizer_7.Add(self.tcXMax, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL, 0)
+        sizer_5.Add(sizer_7, 0, wx.EXPAND, 0)
+        sizer_8.Add(self.stYRange, 0, wx.ALIGN_CENTER_VERTICAL, 0)
+        sizer_8.Add(self.tcYMin, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL, 0)
+        sizer_8.Add(self.tcYMax, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL, 0)
+        sizer_5.Add(sizer_8, 0, wx.EXPAND, 0)
+        sizer_3.Add(sizer_5, 1, wx.EXPAND, 0)
         self.SetSizer(sizer_3)
         sizer_3.Fit(self)
         # end wxGlade
@@ -44,5 +80,29 @@ class StgPanel(wx.Panel):
             frame.mplPanel.drawReciprocalMap(frame.om, frame.tt, frame.psd)
         else:
             frame.mplPanel.drawAngularMap(frame.om, frame.tt, frame.psd)
+
+    def OnX0Change(self, event):  # wxGlade: StgPanel.<event_handler>
+        print "Event handler `OnX0Change' not implemented"
+        event.Skip()
+
+    def OnY0Change(self, event):  # wxGlade: StgPanel.<event_handler>
+        print "Event handler `OnY0Change' not implemented"
+        event.Skip()
+
+    def OnXMinChange(self, event):  # wxGlade: StgPanel.<event_handler>
+        print "Event handler `OnXMinChange' not implemented"
+        event.Skip()
+
+    def OnXMaxChange(self, event):  # wxGlade: StgPanel.<event_handler>
+        print "Event handler `OnXMaxChange' not implemented"
+        event.Skip()
+
+    def OnYMinChange(self, event):  # wxGlade: StgPanel.<event_handler>
+        print "Event handler `OnYMinChange' not implemented"
+        event.Skip()
+
+    def OnYMaxChange(self, event):  # wxGlade: StgPanel.<event_handler>
+        print "Event handler `OnYMaxChange' not implemented"
+        event.Skip()
 
 # end of class StgPanel
