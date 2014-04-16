@@ -41,6 +41,12 @@ class MplPanel(wx.Panel):
         #center of the map
         self.x0 = None
         self.y0 = None
+        
+        #map ranges
+        self.xmin = None
+        self.xmax = None
+        self.ymin = None
+        self.ymax = None
 
     def __set_properties(self):
         # begin wxGlade: MplPanel.__set_properties

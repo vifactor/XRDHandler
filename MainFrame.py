@@ -98,14 +98,14 @@ class MainFrame(wx.Frame):
             self.mplPanel.drawAngularMap(self.om,self.tt,self.psd)
             
             #initial figure ranges are limits of axes
-            xmin, xmax = self.mplPanel.figure.gca().get_xlim()
-            ymin, ymax = self.mplPanel.figure.gca().get_ylim()
+            self.stgPanel.xmin, self.stgPanel.xmax = self.mplPanel.figure.gca().get_xlim()
+            self.stgPanel.ymin, self.stgPanel.ymax = self.mplPanel.figure.gca().get_ylim()
 
             #print figure ranges in the corresponding TextControls
-            self.stgPanel.tcXMin.SetValue("%s" % xmin)
-            self.stgPanel.tcXMax.SetValue("%s" % xmax)
-            self.stgPanel.tcYMin.SetValue("%s" % ymin)
-            self.stgPanel.tcYMax.SetValue("%s" % ymax)
+            self.stgPanel.tcXMin.SetValue("%s" % self.stgPanel.xmin)
+            self.stgPanel.tcXMax.SetValue("%s" % self.stgPanel.xmax)
+            self.stgPanel.tcYMin.SetValue("%s" % self.stgPanel.ymin)
+            self.stgPanel.tcYMax.SetValue("%s" % self.stgPanel.ymax)
             
         #destroy dialog
         dlg.Destroy()
@@ -129,9 +129,8 @@ class MainFrame(wx.Frame):
             print path
             self.saveFitDataFile(path)
         
-        #TODO
-        print self.mplPanel.figure.gca().get_xlim()
-        print self.mplPanel.figure.gca().get_ylim()
+        #TODO save date only in xylimits
+
         event.Skip()
 
     def saveFitDataFile(self, path):
