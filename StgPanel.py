@@ -139,8 +139,8 @@ class StgPanel(wx.Panel):
         #python solution for switch statement
         {                                   \
             0: frame.mplPanel.drawAngularMap,\
-            1: frame.mplPanel.drawReciprocalMap,\
-            2: frame.mplPanel.drawReciprocalMap \
+            1: frame.mplPanel.drawReciprocalMap_Q,\
+            2: frame.mplPanel.drawReciprocalMap_q \
         }[mode](frame.om, frame.tt, frame.psd)
     
     def updateControls():

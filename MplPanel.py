@@ -82,7 +82,7 @@ class MplPanel(wx.Panel):
         self.figure.colorbar(cf, ax = self.axes) 
         self.figure.canvas.draw()
 
-    def drawReciprocalMap(self, om, tt, psd):
+    def drawReciprocalMap_Q(self, om, tt, psd):
         Si = xu.materials.Si
         hxrd = xu.HXRD(Si.Q(1,1,0),Si.Q(0,0,1))
         [qx,qy,qz] = hxrd.Ang2Q(om,tt,delta=[0.0, 0.0])
@@ -104,6 +104,38 @@ class MplPanel(wx.Panel):
         #annotate axis
         self.axes.set_xlabel(r'$Q_{[110]}$ ($\AA^{-1}$)')
         self.axes.set_ylabel(r'$Q_{[001]}$ ($\AA^{-1}$)')
+        
+        # draw colorbar
+        self.figure.colorbar(cf, ax = self.axes) # draw colorbar
+        self.figure.canvas.draw()
+        
+    def drawReciprocalMap_q(self, om, tt, psd):
+        Si = xu.materials.Si
+        hxrd = xu.HXRD(Si.Q(1,1,0),Si.Q(0,0,1))
+        
+        [q0x, q0y, q0z] = hxrd.Ang2Q(self.x0,self.y0,delta=[0.0, 0.0])
+        [qx,qy,qz] = hxrd.Ang2Q(om,tt,delta=[0.0, 0.0])
+        
+        #subtract centeral point from arrays by list comprehension
+        qy[:] = [q - q0y for q in qy]
+        qz[:] = [q - q0z for q in qz]
+        
+        gridder = xu.Gridder2D(100,100)
+        gridder(qy,qz,psd)
+        INT = xu.maplog(gridder.data.transpose(),6,0)
+        
+        #clear axes from previous drawing
+        self.figure.clf()
+        #add subplot to the figure
+        self.axes = self.figure.add_subplot(111)
+        #draw rsm
+        cf = self.axes.contourf(gridder.xaxis, gridder.yaxis,INT,100,extend='min')
+        #draw center
+        self.axes.scatter(0, 0, s = 100, marker = 'x', c = 'w')
+        
+        #annotate axis
+        self.axes.set_xlabel(r'$q_{[110]}$ ($\AA^{-1}$)')
+        self.axes.set_ylabel(r'$q_{[001]}$ ($\AA^{-1}$)')
         
         # draw colorbar
         self.figure.colorbar(cf, ax = self.axes) # draw colorbar
