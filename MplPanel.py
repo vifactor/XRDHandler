@@ -130,7 +130,7 @@ class MplPanel(wx.Panel):
         self.axes = self.figure.add_subplot(111)
         #draw rsm
         cf = self.axes.contourf(gridder.xaxis, gridder.yaxis,INT,100,extend='min')
-        #draw center
+        #draw center, in this mode center is always at zero point
         self.axes.scatter(0, 0, s = 100, marker = 'x', c = 'w')
         
         #annotate axis

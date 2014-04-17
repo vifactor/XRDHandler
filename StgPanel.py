@@ -78,6 +78,7 @@ class StgPanel(wx.Panel):
         mode = self.cbMode.GetCurrentSelection()
             
         self.updateFigure(mode)
+        self.updateControls(mode)
 
     def OnX0Change(self, event):  # wxGlade: StgPanel.<event_handler>
         frame = self.GetParent()
@@ -143,7 +144,23 @@ class StgPanel(wx.Panel):
             2: frame.mplPanel.drawReciprocalMap_q \
         }[mode](frame.om, frame.tt, frame.psd)
     
-    def updateControls():
-        pass
+    def updateControls(self, mode):
+        if mode == 0:
+            self.tcX0.Enable(True)
+            self.tcY0.Enable(True)
+            return
+        elif mode == 1:
+            self.tcX0.Enable(True)
+            self.tcY0.Enable(True)
+            return
+        else: #mode == 2:
+            #print central point in the corresponding TextControls
+            self.tcX0.SetValue("0.00")
+            self.tcY0.SetValue("0.00")
+        
+            self.tcX0.Enable(False)
+            self.tcY0.Enable(False)
+            
+            return
 
 # end of class StgPanel
