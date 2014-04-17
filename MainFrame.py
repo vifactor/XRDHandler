@@ -91,6 +91,9 @@ class MainFrame(wx.Frame):
             #draw the angular map
             self.mplPanel.drawAngularMap()
             
+            #enable mode selection ComboBox
+            self.stgPanel.cbMode.Enable(True)
+            
             #print central point in the corresponding TextControls
             self.stgPanel.tcX0.SetValue("%s" % self.mplPanel.x0)
             self.stgPanel.tcY0.SetValue("%s" % self.mplPanel.y0)
@@ -126,9 +129,6 @@ class MainFrame(wx.Frame):
             path = dlg.GetPath()
             print path
             self.saveFitDataFile(path)
-        
-        #TODO save data only in xylimits
-
         event.Skip()
 
     def saveFitDataFile(self, path):

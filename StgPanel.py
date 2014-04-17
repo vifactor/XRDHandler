@@ -16,6 +16,7 @@ class StgPanel(wx.Panel):
         # begin wxGlade: StgPanel.__init__
         kwds["style"] = wx.TAB_TRAVERSAL
         wx.Panel.__init__(self, *args, **kwds)
+        self.stMode = wx.StaticText(self, -1, "Data mode")
         self.cbMode = wx.ComboBox(self, -1, choices=["Angles", "Reciprocal points (Q)", "Reciprocal points (q)"], style=wx.CB_DROPDOWN | wx.CB_READONLY)
         self.stCenterOn = wx.StaticText(self, -1, "Center on")
         self.tcX0 = wx.TextCtrl(self, -1, "", style=wx.TE_PROCESS_ENTER)
@@ -42,7 +43,14 @@ class StgPanel(wx.Panel):
 
     def __set_properties(self):
         # begin wxGlade: StgPanel.__set_properties
+        self.cbMode.Enable(False)
         self.cbMode.SetSelection(0)
+        self.tcX0.Enable(False)
+        self.tcY0.Enable(False)
+        self.tcXMin.Enable(False)
+        self.tcXMax.Enable(False)
+        self.tcYMin.Enable(False)
+        self.tcYMax.Enable(False)
         # end wxGlade
 
     def __do_layout(self):
@@ -53,7 +61,10 @@ class StgPanel(wx.Panel):
         sizer_7 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_4 = wx.BoxSizer(wx.VERTICAL)
         sizer_6 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_3.Add(self.cbMode, 0, 0, 5)
+        sizer_9 = wx.BoxSizer(wx.VERTICAL)
+        sizer_9.Add(self.stMode, 0, wx.LEFT | wx.EXPAND, 0)
+        sizer_9.Add(self.cbMode, 0, 0, 5)
+        sizer_3.Add(sizer_9, 0, wx.EXPAND, 0)
         sizer_4.Add(self.stCenterOn, 0, wx.LEFT | wx.EXPAND, 0)
         sizer_6.Add(self.tcX0, 0, 0, 0)
         sizer_6.Add(self.tcY0, 0, 0, 0)
