@@ -159,21 +159,59 @@ class StgPanel(wx.Panel):
         frame = self.GetParent()
         
         if mode == 0:
+            self.tcX0.SetValue("%s" % frame.mplPanel.x0)
+            self.tcY0.SetValue("%s" % frame.mplPanel.y0)
+            
             self.tcX0.Enable(True)
             self.tcY0.Enable(True)
-            return
+
+            self.tcXMin.SetValue("-")
+            self.tcXMax.SetValue("-")
+            
+            self.tcYMin.SetValue("-")
+            self.tcYMax.SetValue("-")
+
+            self.tcXMin.Enable(False)
+            self.tcXMax.Enable(False)
+            
+            self.tcYMin.Enable(False)
+            self.tcYMax.Enable(False)
         elif mode == 1:
+            self.tcX0.SetValue("%s" % frame.mplPanel.x0)
+            self.tcY0.SetValue("%s" % frame.mplPanel.y0)
+        
             self.tcX0.Enable(True)
             self.tcY0.Enable(True)
-            return
+            
+            self.tcXMin.SetValue("-")
+            self.tcXMax.SetValue("-")
+            
+            self.tcYMin.SetValue("-")
+            self.tcYMax.SetValue("-")
+            
+            self.tcXMin.Enable(False)
+            self.tcXMax.Enable(False)
+            
+            self.tcYMin.Enable(False)
+            self.tcYMax.Enable(False)
         else: #mode == 2:
             #print central point in the corresponding TextControls
-            self.tcX0.SetValue("0.00")
-            self.tcY0.SetValue("0.00")
+            self.tcX0.SetValue("%s" % frame.mplPanel.x0)
+            self.tcY0.SetValue("%s" % frame.mplPanel.x0)
         
             self.tcX0.Enable(False)
             self.tcY0.Enable(False)
             
-            return
+            self.tcXMin.SetValue("%s" % frame.mplPanel.x0)
+            self.tcXMax.SetValue("%s" % frame.mplPanel.x0)
+            
+            self.tcYMin.SetValue("%s" % frame.mplPanel.y0)
+            self.tcYMax.SetValue("%s" % frame.mplPanel.y0)
+            
+            self.tcXMin.Enable(True)
+            self.tcXMax.Enable(True)
+            
+            self.tcYMin.Enable(True)
+            self.tcYMax.Enable(True)
 
 # end of class StgPanel
