@@ -75,33 +75,27 @@ class StgPanel(wx.Panel):
 
     def OnViewModeSelect(self, event):  # wxGlade: StgPanel.<event_handler>
         frame = self.GetParent()
-        
-        if self.cbMode.GetCurrentSelection() == 1:
-            frame.mplPanel.drawReciprocalMap(frame.om, frame.tt, frame.psd)
-        else:
-            frame.mplPanel.drawAngularMap(frame.om, frame.tt, frame.psd)
+        mode = self.cbMode.GetCurrentSelection()
+            
+        self.updateFigure(mode)
 
     def OnX0Change(self, event):  # wxGlade: StgPanel.<event_handler>
         frame = self.GetParent()
         frame.mplPanel.x0 = float(self.tcX0.GetValue())
         
-        #TODO duplication of code
+        mode = self.cbMode.GetCurrentSelection()
+        
         #very ineffective but working solution to update central point
-        if self.cbMode.GetCurrentSelection() == 1:
-            frame.mplPanel.drawReciprocalMap(frame.om, frame.tt, frame.psd)
-        else:
-            frame.mplPanel.drawAngularMap(frame.om, frame.tt, frame.psd)
+        self.updateFigure(mode)
         
     def OnY0Change(self, event):  # wxGlade: StgPanel.<event_handler>
         frame = self.GetParent()
         frame.mplPanel.y0 = float(self.tcY0.GetValue())
         
-        #TODO duplication of code
+        mode = self.cbMode.GetCurrentSelection()
+        
         #very ineffective but working solution to update central point
-        if self.cbMode.GetCurrentSelection() == 1:
-            frame.mplPanel.drawReciprocalMap(frame.om, frame.tt, frame.psd)
-        else:
-            frame.mplPanel.drawAngularMap(frame.om, frame.tt, frame.psd)
+        self.updateFigure(mode)
         
     def OnXMinChange(self, event):  # wxGlade: StgPanel.<event_handler>
         frame = self.GetParent()
@@ -139,5 +133,17 @@ class StgPanel(wx.Panel):
         frame.mplPanel.figure.gca().set_ylim(frame.mplPanel.ymin, frame.mplPanel.ymax)
         #redraw figure
         frame.mplPanel.canvas.draw()
+    
+    def updateFigure(self, mode):
+        frame = self.GetParent()
+        #python solution for switch statement
+        {                                   \
+            0: frame.mplPanel.drawAngularMap,\
+            1: frame.mplPanel.drawReciprocalMap,\
+            2: frame.mplPanel.drawReciprocalMap \
+        }[mode](frame.om, frame.tt, frame.psd)
+    
+    def updateControls():
+        pass
 
 # end of class StgPanel
