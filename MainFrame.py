@@ -50,7 +50,7 @@ class MainFrame(wx.Frame):
         self.__do_layout()
 
         self.Bind(wx.EVT_MENU, self.OnOpen, self.Open)
-        self.Bind(wx.EVT_MENU, self.onSave, self.Save)
+        self.Bind(wx.EVT_MENU, self.OnSave, self.Save)
         self.Bind(wx.EVT_MENU, self.OnExit, self.Exit)
         self.Bind(wx.EVT_MENU, self.OnAbout, self.About)
         # end wxGlade
@@ -83,19 +83,17 @@ class MainFrame(wx.Frame):
             self.dirname = dlg.GetDirectory()
             
             self.SetStatusText(self.filename)
-
-            self.om,self.tt,self.psd = xu.io.getxrdml_map(os.path.join(self.dirname + os.sep, self.filename))
-
-            #initially central point is in the center of the map
-            self.mplPanel.x0 = (max(self.om) + min(self.om))/2
-            self.mplPanel.y0 = (max(self.tt) + min(self.tt))/2
+            
+            #read xrdml datafile
+            om, tt, psd = xu.io.getxrdml_map(os.path.join(self.dirname + os.sep, self.filename))
+            #setup mplPanel
+            self.mplPanel.setup(om, tt, psd)
+            #draw the angular map
+            self.mplPanel.drawAngularMap()
             
             #print central point in the corresponding TextControls
             self.stgPanel.tcX0.SetValue("%s" % self.mplPanel.x0)
             self.stgPanel.tcY0.SetValue("%s" % self.mplPanel.y0)
-
-            #draw the angular map
-            self.mplPanel.drawAngularMap(self.om,self.tt,self.psd)
             
             #initial figure ranges are limits of axes
             self.stgPanel.xmin, self.stgPanel.xmax = self.mplPanel.figure.gca().get_xlim()
@@ -119,7 +117,7 @@ class MainFrame(wx.Frame):
         dlg.ShowModal()
         dlg.Destroy()
 
-    def onSave(self, event):  # wxGlade: MainFrame.<event_handler>
+    def OnSave(self, event):  # wxGlade: MainFrame.<event_handler>
         dlg = wx.FileDialog(self, "Save QFit file", self.dirname, "",
                             "QFit files (*.qfit)|*.qfit", wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
         if dlg.ShowModal() == wx.ID_OK:

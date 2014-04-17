@@ -142,9 +142,11 @@ class StgPanel(wx.Panel):
             0: frame.mplPanel.drawAngularMap,\
             1: frame.mplPanel.drawReciprocalMap_Q,\
             2: frame.mplPanel.drawReciprocalMap_q \
-        }[mode](frame.om, frame.tt, frame.psd)
+        }[mode]()
     
     def updateControls(self, mode):
+        frame = self.GetParent()
+        
         if mode == 0:
             self.tcX0.Enable(True)
             self.tcY0.Enable(True)

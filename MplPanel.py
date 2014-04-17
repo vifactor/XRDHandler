@@ -47,6 +47,11 @@ class MplPanel(wx.Panel):
         self.xmax = None
         self.ymin = None
         self.ymax = None
+        
+        #map data
+        self.omega = None
+        self.ttheta = None
+        self.intensity = None
 
     def __set_properties(self):
         # begin wxGlade: MplPanel.__set_properties
@@ -61,10 +66,26 @@ class MplPanel(wx.Panel):
         self.SetSizer(sizer_2)
         sizer_2.Fit(self)
         # end wxGlade
-    
-    def drawAngularMap(self, om, tt, psd):
+        
+    def setup(self, om, tt, its):
+        #angular data arrays
+        self.omega = om
+        self.ttheta = tt
+        self.intensity = its
+        
+        #limits are defined as max and min values of angles
+        self.xmin = min(self.omega)
+        self.xmax = max(self.omega)
+        self.ymin = min(self.ttheta)
+        self.ymax = max(self.ttheta)
+        
+        #central point is in the center of the map
+        self.x0 = (self.xmax + self.xmin) / 2
+        self.y0 = (self.ymax + self.ymin) / 2
+        
+    def drawAngularMap(self):
         gridder = xu.Gridder2D(150,150)
-        gridder(om, tt, psd)
+        gridder(self.omega, self.ttheta, self.intensity)
         INT = xu.maplog(gridder.data.transpose(),6,0)
 
         #clear axes from previous drawing
@@ -79,17 +100,18 @@ class MplPanel(wx.Panel):
         self.axes.set_xlabel(r'$\omega$ (deg)')
         self.axes.set_ylabel(r'$2\theta$ (deg)')
         # draw colorbar
-        self.figure.colorbar(cf, ax = self.axes) 
+        self.figure.colorbar(cf, ax = self.axes)
+        #draw figure
         self.figure.canvas.draw()
 
-    def drawReciprocalMap_Q(self, om, tt, psd):
+    def drawReciprocalMap_Q(self):
         Si = xu.materials.Si
         hxrd = xu.HXRD(Si.Q(1,1,0),Si.Q(0,0,1))
-        [qx,qy,qz] = hxrd.Ang2Q(om,tt,delta=[0.0, 0.0])
+        [qx,qy,qz] = hxrd.Ang2Q(self.omega,self.ttheta,delta=[0.0, 0.0])
         [q0x, q0y, q0z] = hxrd.Ang2Q(self.x0,self.y0,delta=[0.0, 0.0])
         
         gridder = xu.Gridder2D(100,100)
-        gridder(qy,qz,psd)
+        gridder(qy,qz, self.intensity)
         INT = xu.maplog(gridder.data.transpose(),6,0)
         
         #clear axes from previous drawing
@@ -104,24 +126,24 @@ class MplPanel(wx.Panel):
         #annotate axis
         self.axes.set_xlabel(r'$Q_{[110]}$ ($\AA^{-1}$)')
         self.axes.set_ylabel(r'$Q_{[001]}$ ($\AA^{-1}$)')
-        
         # draw colorbar
-        self.figure.colorbar(cf, ax = self.axes) # draw colorbar
+        self.figure.colorbar(cf, ax = self.axes)
+        #draw figure
         self.figure.canvas.draw()
         
-    def drawReciprocalMap_q(self, om, tt, psd):
+    def drawReciprocalMap_q(self):
         Si = xu.materials.Si
         hxrd = xu.HXRD(Si.Q(1,1,0),Si.Q(0,0,1))
         
-        [q0x, q0y, q0z] = hxrd.Ang2Q(self.x0,self.y0,delta=[0.0, 0.0])
-        [qx,qy,qz] = hxrd.Ang2Q(om,tt,delta=[0.0, 0.0])
+        [q0x, q0y, q0z] = hxrd.Ang2Q(self.x0, self.y0, delta=[0.0, 0.0])
+        [qx,qy,qz] = hxrd.Ang2Q(self.omega,self.ttheta, delta=[0.0, 0.0])
         
         #subtract centeral point from arrays by list comprehension
         qy[:] = [q - q0y for q in qy]
         qz[:] = [q - q0z for q in qz]
         
         gridder = xu.Gridder2D(100,100)
-        gridder(qy,qz,psd)
+        gridder(qy,qz, self.intensity)
         INT = xu.maplog(gridder.data.transpose(),6,0)
         
         #clear axes from previous drawing
@@ -138,7 +160,8 @@ class MplPanel(wx.Panel):
         self.axes.set_ylabel(r'$q_{[001]}$ ($\AA^{-1}$)')
         
         # draw colorbar
-        self.figure.colorbar(cf, ax = self.axes) # draw colorbar
+        self.figure.colorbar(cf, ax = self.axes)
+        #draw figure
         self.figure.canvas.draw()
 
 # end of class MplPanel
