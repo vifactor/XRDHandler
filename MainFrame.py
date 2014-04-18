@@ -101,7 +101,7 @@ class MainFrame(wx.Frame):
 
     def OnAbout(self, event):  # wxGlade: MainFrame.<event_handler>
         #Create a message dialog box
-        dlg = wx.MessageDialog(self, "RSM Handler v0.55", "XRD", wx.OK)
+        dlg = wx.MessageDialog(self, "RSM Handler v0.60", "XRD", wx.OK)
         dlg.ShowModal()
         dlg.Destroy()
 
@@ -136,7 +136,9 @@ class MainFrame(wx.Frame):
         qxmin, qxmax, qzmin, qzmax = self.mplPanel.getLimits()
         
         for i in range(len(intensity)):
-            fout.write('{0}\t{1}\t{2}\n'.format(qx[i], qz[i], intensity[i]))
+            #save data only in predefined ranges
+            if qx[i] > qxmin and qx[i] < qxmax and qz[i] > qzmin and qz[i] < qzmax:
+                fout.write('{0}\t{1}\t{2}\n'.format(qx[i], qz[i], intensity[i]))
         
         fout.close()
 
