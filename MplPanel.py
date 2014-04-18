@@ -38,20 +38,27 @@ class MplPanel(wx.Panel):
         # show toolbar
         self.toolbar.Show()
         
-        #center of the map
-        self.x0 = None
-        self.y0 = None
+        #origing in angles
+        self.omega0 = None
+        self.ttheta0 = None
+        #origin in reciprocal units
+        self.Q0x = None
+        self.Q0z = None
         
         #map ranges
-        self.xmin = None
-        self.xmax = None
-        self.ymin = None
-        self.ymax = None
+        self.qxmin = None
+        self.qxmax = None
+        self.qzmin = None
+        self.qzmax = None
         
         #map data
         self.omega = None
         self.ttheta = None
         self.intensity = None
+        
+        #hxrd transformator
+        Si = xu.materials.Si
+        self.hxrd = xu.HXRD(Si.Q(1,1,0),Si.Q(0,0,1))
 
     def __set_properties(self):
         # begin wxGlade: MplPanel.__set_properties
@@ -73,15 +80,12 @@ class MplPanel(wx.Panel):
         self.ttheta = tt
         self.intensity = its
         
-        #limits are defined as max and min values of angles
-        self.xmin = min(self.omega)
-        self.xmax = max(self.omega)
-        self.ymin = min(self.ttheta)
-        self.ymax = max(self.ttheta)
+        #angular central point:in the center of the map
+        self.omega0 = (min(self.omega) + max(self.omega)) / 2
+        self.ttheta0 = (min(self.ttheta) + max(self.ttheta)) / 2
         
-        #central point is in the center of the map
-        self.x0 = (self.xmax + self.xmin) / 2
-        self.y0 = (self.ymax + self.ymin) / 2
+        #recipocal units central point
+        self.updateAngularOrigin(self.omega0, self.ttheta0)
         
     def drawAngularMap(self):
         gridder = xu.Gridder2D(150,150)
@@ -95,7 +99,7 @@ class MplPanel(wx.Panel):
         #draw rsm
         cf = self.axes.contourf(gridder.xaxis, gridder.yaxis,INT,100,extend='min')
         #draw center
-        self.axes.scatter(self.x0, self.y0, s = 100, marker = 'x', c = 'w')
+        self.axes.scatter(self.omega0, self.ttheta0, s = 100, marker = 'x', c = 'w')
         #annotate axes
         self.axes.set_xlabel(r'$\omega$ (deg)')
         self.axes.set_ylabel(r'$2\theta$ (deg)')
@@ -105,10 +109,7 @@ class MplPanel(wx.Panel):
         self.figure.canvas.draw()
 
     def drawReciprocalMap_Q(self):
-        Si = xu.materials.Si
-        hxrd = xu.HXRD(Si.Q(1,1,0),Si.Q(0,0,1))
-        [qx,qy,qz] = hxrd.Ang2Q(self.omega,self.ttheta,delta=[0.0, 0.0])
-        [q0x, q0y, q0z] = hxrd.Ang2Q(self.x0,self.y0,delta=[0.0, 0.0])
+        [qx,qy,qz] = self.hxrd.Ang2Q(self.omega,self.ttheta,delta=[0.0, 0.0])
         
         gridder = xu.Gridder2D(100,100)
         gridder(qy,qz, self.intensity)
@@ -121,7 +122,7 @@ class MplPanel(wx.Panel):
         #draw rsm
         cf = self.axes.contourf(gridder.xaxis, gridder.yaxis,INT,100,extend='min')
         #draw center
-        self.axes.scatter(q0y, q0z, s = 100, marker = 'x', c = 'w')
+        self.axes.scatter(self.Q0x, self.Q0z, s = 100, marker = 'x', c = 'w')
         
         #annotate axis
         self.axes.set_xlabel(r'$Q_{[110]}$ ($\AA^{-1}$)')
@@ -132,18 +133,14 @@ class MplPanel(wx.Panel):
         self.figure.canvas.draw()
         
     def drawReciprocalMap_q(self):
-        Si = xu.materials.Si
-        hxrd = xu.HXRD(Si.Q(1,1,0),Si.Q(0,0,1))
-        
-        [q0x, q0y, q0z] = hxrd.Ang2Q(self.x0, self.y0, delta=[0.0, 0.0])
-        [qx,qy,qz] = hxrd.Ang2Q(self.omega,self.ttheta, delta=[0.0, 0.0])
+        [dummy, qx, qz] = self.hxrd.Ang2Q(self.omega,self.ttheta, delta=[0.0, 0.0])
         
         #subtract centeral point from arrays by list comprehension
-        qy[:] = [q - q0y for q in qy]
-        qz[:] = [q - q0z for q in qz]
+        qx[:] = [q - self.Q0x for q in qx]
+        qz[:] = [q - self.Q0z for q in qz]
         
         gridder = xu.Gridder2D(100,100)
-        gridder(qy,qz, self.intensity)
+        gridder(qx, qz, self.intensity)
         INT = xu.maplog(gridder.data.transpose(),6,0)
         
         #clear axes from previous drawing
@@ -163,5 +160,56 @@ class MplPanel(wx.Panel):
         self.figure.colorbar(cf, ax = self.axes)
         #draw figure
         self.figure.canvas.draw()
+        
+    def updateAngularOrigin(self, om0, tt0):
+        self.omega0 = om0
+        self.ttheta0 = tt0
+        
+        [dummy, self.Q0x, self.Q0z] = self.hxrd.Ang2Q(self.omega0,self.ttheta0,delta=[0.0, 0.0])
+    
+    def updateReciprocalOrigin(self, Q0x, Q0z):
+        self.Q0x = Q0x
+        self.Q0z = Q0z
+        
+        #low incidence high exit angles for panalytical
+        [self.omega0, chi, phi, self.ttheta0] = self.hxrd.Q2Ang((0.0, self.Q0x, self.Q0z), geometry = 'lo_hi')
+        
+    def update_qxMinLimit(self, qlim):
+        #get previous axes limits
+        qmin, qmax = self.figure.gca().get_xlim()
+        #set new axes limits
+        self.figure.gca().set_xlim(qlim, qmax)
+        #redraw figure
+        self.canvas.draw()
+        
+    def update_qxMaxLimit(self, qlim):
+        #get previous axes limits
+        qmin, qmax = self.figure.gca().get_xlim()
+        #set new axes limits
+        self.figure.gca().set_xlim(qmin, qlim)
+        #redraw figure
+        self.canvas.draw()
+        
+    def update_qzMinLimit(self, qlim):
+        #get previous axes limits
+        qmin, qmax = self.figure.gca().get_ylim()
+        #set new axes limits
+        self.figure.gca().set_ylim(qlim, qmax)
+        #redraw figure
+        self.canvas.draw()
+        
+    def update_qzMaxLimit(self, qlim):
+        #get previous axes limits
+        qmin, qmax = self.figure.gca().get_ylim()
+        #set new axes limits
+        self.figure.gca().set_ylim(qmin, qlim)
+        #redraw figure
+        self.canvas.draw()
+        
+    def getLimits(self):
+        qxmin, qxmax = self.figure.gca().get_xlim()
+        qzmin, qzmax = self.figure.gca().get_ylim()
+        return qxmin, qxmax, qzmin, qzmax
+        
 
 # end of class MplPanel

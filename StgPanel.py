@@ -93,74 +93,68 @@ class StgPanel(wx.Panel):
 
     def OnX0Change(self, event):  # wxGlade: StgPanel.<event_handler>
         frame = self.GetParent()
-        frame.mplPanel.x0 = float(self.tcX0.GetValue())
-        
+
         mode = self.cbMode.GetCurrentSelection()
         
+        #TODO Validation!!!
+        if mode == 0:
+            frame.mplPanel.updateAngularOrigin(float(self.tcX0.GetValue()), float(self.tcY0.GetValue()))
+        else:
+            frame.mplPanel.updateReciprocalOrigin(float(self.tcX0.GetValue()), float(self.tcY0.GetValue()))
         #very ineffective but working solution to update central point
         self.updateFigure(mode)
         
+        
     def OnY0Change(self, event):  # wxGlade: StgPanel.<event_handler>
         frame = self.GetParent()
-        frame.mplPanel.y0 = float(self.tcY0.GetValue())
         
         mode = self.cbMode.GetCurrentSelection()
         
+        #TODO Validation!!!
+        if mode == 0:
+            frame.mplPanel.updateAngularOrigin(float(self.tcX0.GetValue()), float(self.tcY0.GetValue()))
+        else:
+            frame.mplPanel.updateReciprocalOrigin(float(self.tcX0.GetValue()), float(self.tcY0.GetValue()))
         #very ineffective but working solution to update central point
         self.updateFigure(mode)
         
     def OnXMinChange(self, event):  # wxGlade: StgPanel.<event_handler>
         frame = self.GetParent()
         
-        frame.mplPanel.xmin = float(self.tcXMin.GetValue())
-        #set new axes limits
-        frame.mplPanel.figure.gca().set_xlim(frame.mplPanel.xmin, frame.mplPanel.xmax)
-        #redraw figure
-        frame.mplPanel.canvas.draw()
+        frame.mplPanel.update_qxMinLimit(float(self.tcXMin.GetValue()))
 
     def OnXMaxChange(self, event):  # wxGlade: StgPanel.<event_handler>
         frame = self.GetParent()
         
-        frame.mplPanel.xmax = float(self.tcXMax.GetValue())
-        #set new axes limits
-        frame.mplPanel.figure.gca().set_xlim(frame.mplPanel.xmin, frame.mplPanel.xmax)
-        #redraw figure
-        frame.mplPanel.canvas.draw()
+        frame.mplPanel.update_qxMaxLimit(float(self.tcXMax.GetValue()))
 
     def OnYMinChange(self, event):  # wxGlade: StgPanel.<event_handler>
         frame = self.GetParent()
         
-        frame.mplPanel.ymin = float(self.tcYMin.GetValue())
-        #set new axes limits
-        frame.mplPanel.figure.gca().set_ylim(frame.mplPanel.ymin, frame.mplPanel.ymax)
-        #redraw figure
-        frame.mplPanel.canvas.draw()
+        frame.mplPanel.update_qzMinLimit(float(self.tcYMin.GetValue()))
 
     def OnYMaxChange(self, event):  # wxGlade: StgPanel.<event_handler>
         frame = self.GetParent()
         
-        #setup value from control TODO validation!
-        frame.mplPanel.ymax = float(self.tcYMax.GetValue())
-        #set new axes limits
-        frame.mplPanel.figure.gca().set_ylim(frame.mplPanel.ymin, frame.mplPanel.ymax)
-        #redraw figure
-        frame.mplPanel.canvas.draw()
+        frame.mplPanel.update_qzMaxLimit(float(self.tcYMax.GetValue()))
     
     def updateFigure(self, mode):
         frame = self.GetParent()
-        #python solution for switch statement
-        {                                   \
-            0: frame.mplPanel.drawAngularMap,\
-            1: frame.mplPanel.drawReciprocalMap_Q,\
-            2: frame.mplPanel.drawReciprocalMap_q \
-        }[mode]()
+        
+        if mode == 0:
+            frame.mplPanel.drawAngularMap()
+        elif mode == 1:
+            frame.mplPanel.drawReciprocalMap_Q()
+        else: #mode == 2
+            frame.mplPanel.drawReciprocalMap_q()
     
     def updateControls(self, mode):
         frame = self.GetParent()
         
+        self.cbMode.Enable(True)
         if mode == 0:
-            self.tcX0.SetValue("%s" % frame.mplPanel.x0)
-            self.tcY0.SetValue("%s" % frame.mplPanel.y0)
+            self.tcX0.SetValue("%s" % frame.mplPanel.omega0)
+            self.tcY0.SetValue("%s" % frame.mplPanel.ttheta0)
             
             self.tcX0.Enable(True)
             self.tcY0.Enable(True)
@@ -177,8 +171,8 @@ class StgPanel(wx.Panel):
             self.tcYMin.Enable(False)
             self.tcYMax.Enable(False)
         elif mode == 1:
-            self.tcX0.SetValue("%s" % frame.mplPanel.x0)
-            self.tcY0.SetValue("%s" % frame.mplPanel.y0)
+            self.tcX0.SetValue("%s" % frame.mplPanel.Q0x)
+            self.tcY0.SetValue("%s" % frame.mplPanel.Q0z)
         
             self.tcX0.Enable(True)
             self.tcY0.Enable(True)
@@ -196,17 +190,18 @@ class StgPanel(wx.Panel):
             self.tcYMax.Enable(False)
         else: #mode == 2:
             #print central point in the corresponding TextControls
-            self.tcX0.SetValue("%s" % frame.mplPanel.x0)
-            self.tcY0.SetValue("%s" % frame.mplPanel.x0)
+            self.tcX0.SetValue("%s" % frame.mplPanel.Q0x)
+            self.tcY0.SetValue("%s" % frame.mplPanel.Q0z)
         
             self.tcX0.Enable(False)
             self.tcY0.Enable(False)
             
-            self.tcXMin.SetValue("%s" % frame.mplPanel.x0)
-            self.tcXMax.SetValue("%s" % frame.mplPanel.x0)
+            qxmin, qxmax, qzmin, qzmax = frame.mplPanel.getLimits()
+            self.tcXMin.SetValue("%s" % qxmin)
+            self.tcXMax.SetValue("%s" % qxmax)
             
-            self.tcYMin.SetValue("%s" % frame.mplPanel.y0)
-            self.tcYMax.SetValue("%s" % frame.mplPanel.y0)
+            self.tcYMin.SetValue("%s" % qzmin)
+            self.tcYMax.SetValue("%s" % qzmax)
             
             self.tcXMin.Enable(True)
             self.tcXMax.Enable(True)

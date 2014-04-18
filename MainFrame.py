@@ -88,25 +88,10 @@ class MainFrame(wx.Frame):
             om, tt, psd = xu.io.getxrdml_map(os.path.join(self.dirname + os.sep, self.filename))
             #setup mplPanel
             self.mplPanel.setup(om, tt, psd)
+            
             #draw the angular map
-            self.mplPanel.drawAngularMap()
-            
-            #enable mode selection ComboBox
-            self.stgPanel.cbMode.Enable(True)
-            
-            #print central point in the corresponding TextControls
-            self.stgPanel.tcX0.SetValue("%s" % self.mplPanel.x0)
-            self.stgPanel.tcY0.SetValue("%s" % self.mplPanel.y0)
-            
-            #initial figure ranges are limits of axes
-            self.stgPanel.xmin, self.stgPanel.xmax = self.mplPanel.figure.gca().get_xlim()
-            self.stgPanel.ymin, self.stgPanel.ymax = self.mplPanel.figure.gca().get_ylim()
-
-            #print figure ranges in the corresponding TextControls
-            self.stgPanel.tcXMin.SetValue("%s" % self.stgPanel.xmin)
-            self.stgPanel.tcXMax.SetValue("%s" % self.stgPanel.xmax)
-            self.stgPanel.tcYMin.SetValue("%s" % self.stgPanel.ymin)
-            self.stgPanel.tcYMax.SetValue("%s" % self.stgPanel.ymax)
+            self.stgPanel.updateFigure(0)#angular mode
+            self.stgPanel.updateControls(0)
             
         #destroy dialog
         dlg.Destroy()
@@ -116,7 +101,7 @@ class MainFrame(wx.Frame):
 
     def OnAbout(self, event):  # wxGlade: MainFrame.<event_handler>
         #Create a message dialog box
-        dlg = wx.MessageDialog(self, "RSM Handler v0.43", "XRD", wx.OK)
+        dlg = wx.MessageDialog(self, "RSM Handler v0.55", "XRD", wx.OK)
         dlg.ShowModal()
         dlg.Destroy()
 
