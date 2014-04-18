@@ -106,35 +106,40 @@ class MainFrame(wx.Frame):
         dlg.Destroy()
 
     def OnSave(self, event):  # wxGlade: MainFrame.<event_handler>
-        dlg = wx.FileDialog(self, "Save QFit file", self.dirname, "",
-                            "QFit files (*.qfit)|*.qfit", wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
-        if dlg.ShowModal() == wx.ID_OK:
-            # save content in the file
-            # this can be done with wxPython output streams:
-            path = dlg.GetPath()
-            print path
-            self.saveFitDataFile(path)
-        event.Skip()
+        if self.filename:
+            dlg = wx.FileDialog(self, "Save QFit file", self.dirname, self.filename,
+                            "*.*", wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
+            if dlg.ShowModal() == wx.ID_OK:
+                # save content in the file
+                # this can be done with wxPython output streams:
+                path = dlg.GetPath()
+                self.saveFitDataFile(path)
+        else:
+            #Create a message dialog box
+            dlg = wx.MessageDialog(self, "There is no file loaded.", "Error", wx.OK)
+            dlg.ShowModal()
+            dlg.Destroy()
 
     def saveFitDataFile(self, path):
-        if self.filename:
-            fout = open(path, "w")
+        fout = open(path, "w")
+        
+        fout.write("#File created by RSM Handler from an experimental data\n")
+        fout.write("#can be used for numerical fitting\n")
+        fout.write("#[qx]\t[qz]\t[intensity]\n")
             
-            fout.write("#File created by RSM Handler from an experimental data\n")
-            fout.write("#can be used for numerical fitting\n")
-            fout.write("#[qx]\t[qz]\t[intensity]\n")
-            
-            Si = xu.materials.Si
-            hxrd = xu.HXRD(Si.Q(1,1,0),Si.Q(0,0,1))
-            [qx,qy,qz] = hxrd.Ang2Q(self.om,self.tt,delta=[0.0, 0.0])
-            
-            #TODO scale to substrate
-            for i in range(len(self.psd)):
-                fout.write('{0}\t{1}\t{2}\n'.format(qy[i], qz[i], self.psd[i]))
-            
-            fout.close()
-        else:
-            print "No experimental data"
+        #q data points
+        qx, qz = self.mplPanel.get_q()
+        #corresponding intensities
+        intensity = self.mplPanel.get_intensity()
+        
+        #save data only on predefined limits
+        qxmin, qxmax, qzmin, qzmax = self.mplPanel.getLimits()
+        
+        for i in range(len(intensity)):
+            fout.write('{0}\t{1}\t{2}\n'.format(qx[i], qz[i], intensity[i]))
+        
+        fout.close()
+
 
     def saveGpltDataFile(self, path, mode):
         pass

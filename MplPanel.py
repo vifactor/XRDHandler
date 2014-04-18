@@ -133,11 +133,7 @@ class MplPanel(wx.Panel):
         self.figure.canvas.draw()
         
     def drawReciprocalMap_q(self):
-        [dummy, qx, qz] = self.hxrd.Ang2Q(self.omega,self.ttheta, delta=[0.0, 0.0])
-        
-        #subtract centeral point from arrays by list comprehension
-        qx[:] = [q - self.Q0x for q in qx]
-        qz[:] = [q - self.Q0z for q in qz]
+        qx, qz = self.get_q()
         
         gridder = xu.Gridder2D(100,100)
         gridder(qx, qz, self.intensity)
@@ -210,6 +206,18 @@ class MplPanel(wx.Panel):
         qxmin, qxmax = self.figure.gca().get_xlim()
         qzmin, qzmax = self.figure.gca().get_ylim()
         return qxmin, qxmax, qzmin, qzmax
+    
+    def get_q(self):
+        [dummy, qx, qz] = self.hxrd.Ang2Q(self.omega,self.ttheta, delta=[0.0, 0.0])
+        
+        #subtract centeral point from arrays by list comprehension
+        qx[:] = [q - self.Q0x for q in qx]
+        qz[:] = [q - self.Q0z for q in qz]
+        
+        return qx, qz
+        
+    def get_intensity(self):
+        return self.intensity
         
 
 # end of class MplPanel
