@@ -101,13 +101,17 @@ class MainFrame(wx.Frame):
 
     def OnAbout(self, event):  # wxGlade: MainFrame.<event_handler>
         #Create a message dialog box
-        dlg = wx.MessageDialog(self, "RSM Handler v0.60", "XRD", wx.OK)
+        dlg = wx.MessageDialog(self, "RSM Handler v0.62", "XRD", wx.OK)
         dlg.ShowModal()
         dlg.Destroy()
 
     def OnSave(self, event):  # wxGlade: MainFrame.<event_handler>
         if self.filename:
-            dlg = wx.FileDialog(self, "Save QFit file", self.dirname, self.filename,
+            #split file into base part and extension part
+            base, ext = os.path.splitext(self.filename)
+            
+            #propose to save file with the same base as input file but with qfit extension
+            dlg = wx.FileDialog(self, "Save QFit file", self.dirname, base + '.qfit',
                             "*.*", wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
             if dlg.ShowModal() == wx.ID_OK:
                 # save content in the file
