@@ -89,8 +89,10 @@ class MainFrame(wx.Frame):
             #setup mplPanel
             self.mplPanel.setup(om, tt, psd)
             
-            #draw the angular map
-            self.stgPanel.updateFigure(0)#angular mode
+            #selector should be set to angular mode
+            self.stgPanel.cbMode.SetSelection(0)
+            #draw the map in angular mode
+            self.stgPanel.updateFigure(0)
             self.stgPanel.updateControls(0)
             
         #destroy dialog
