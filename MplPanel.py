@@ -57,6 +57,9 @@ class MplPanel(wx.Panel):
         self.ttheta = None
         self.intensity = None
         
+        #data cursor
+        self.cursor = None
+        
         #hxrd transformator
         Si = xu.materials.Si
         self.hxrd = xu.HXRD(Si.Q(1,1,0),Si.Q(0,0,1))
@@ -223,7 +226,18 @@ class MplPanel(wx.Panel):
     def set_cursor(self):
         # set useblit = True on gtkagg for enhanced performance
         self.cursor = Cursor(self.axes, useblit=True, color='black', linewidth=1 )
+        #connect event handler on left button mouse click
+        self.cidrelease = self.canvas.mpl_connect(
+            'button_release_event', self.onLeftClick)
         
     def unset_cursor(self):
-        self.cursor = None
+        if self.cursor:
+            #unset cursor
+            self.cursor = None
+            #disconnect event handler on left button mouse click
+            self.canvas.mpl_disconnect(self.cidrelease)
+        
+    def onLeftClick(self, event):
+        self.unset_cursor()
+        print event.xdata, event.ydata
 # end of class MplPanel
