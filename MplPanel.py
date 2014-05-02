@@ -7,6 +7,7 @@ from matplotlib import cm
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
 from matplotlib.backends.backend_wx import NavigationToolbar2Wx
+from matplotlib.widgets import Cursor
 
 import xrayutilities as xu
 
@@ -219,5 +220,10 @@ class MplPanel(wx.Panel):
     def get_intensity(self):
         return self.intensity
         
-
+    def set_cursor(self):
+        # set useblit = True on gtkagg for enhanced performance
+        self.cursor = Cursor(self.axes, useblit=True, color='black', linewidth=1 )
+        
+    def unset_cursor(self):
+        self.cursor = None
 # end of class MplPanel
