@@ -28,6 +28,7 @@ class StgPanel(wx.Panel):
         self.stYRange = wx.StaticText(self, -1, "Y range")
         self.tcYMin = wx.TextCtrl(self, -1, "", style=wx.TE_PROCESS_ENTER)
         self.tcYMax = wx.TextCtrl(self, -1, "", style=wx.TE_PROCESS_ENTER)
+        self.bFit = wx.Button(self, -1, "Fit")
 
         self.__set_properties()
         self.__do_layout()
@@ -39,6 +40,7 @@ class StgPanel(wx.Panel):
         self.Bind(wx.EVT_TEXT_ENTER, self.OnXMaxChange, self.tcXMax)
         self.Bind(wx.EVT_TEXT_ENTER, self.OnYMinChange, self.tcYMin)
         self.Bind(wx.EVT_TEXT_ENTER, self.OnYMaxChange, self.tcYMax)
+        self.Bind(wx.EVT_BUTTON, self.onFit, self.bFit)
         # end wxGlade
 
     def __set_properties(self):
@@ -51,6 +53,7 @@ class StgPanel(wx.Panel):
         self.tcXMax.Enable(False)
         self.tcYMin.Enable(False)
         self.tcYMax.Enable(False)
+        self.bFit.Hide()
         # end wxGlade
 
     def __do_layout(self):
@@ -80,6 +83,7 @@ class StgPanel(wx.Panel):
         sizer_8.Add(self.tcYMax, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL, 0)
         sizer_5.Add(sizer_8, 0, wx.EXPAND, 0)
         sizer_3.Add(sizer_5, 1, wx.EXPAND, 0)
+        sizer_3.Add(self.bFit, 0, wx.EXPAND, 0)
         self.SetSizer(sizer_3)
         sizer_3.Fit(self)
         # end wxGlade
@@ -208,5 +212,9 @@ class StgPanel(wx.Panel):
             
             self.tcYMin.Enable(True)
             self.tcYMax.Enable(True)
+
+    def onFit(self, event):  # wxGlade: StgPanel.<event_handler>
+        print "Event handler `onFit' not implemented"
+        event.Skip()
 
 # end of class StgPanel
