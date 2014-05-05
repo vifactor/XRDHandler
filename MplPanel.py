@@ -12,6 +12,7 @@ from matplotlib.widgets import Cursor
 import xrayutilities as xu
 
 from PeakFitDialog import PeakFitDialog
+from RSMPeak import RSMPeak
 
 # begin wxGlade: dependencies
 # end wxGlade
@@ -248,5 +249,23 @@ class MplPanel(wx.Panel):
         #set peak name
         dlg.SetPeakName("Peak 1")
         if dlg.ShowModal() == wx.ID_OK:
-            print "Data fitting..."
+            #peak name
+            name = dlg.tcPeakName.GetValue()
+            #peak position
+            pos_x = float(dlg.tcPositionX.GetValue())
+            pos_y = float(dlg.tcPositionY.GetValue())
+            #peak width
+            sigma_x = float(dlg.tcSigmaX.GetValue())
+            sigma_y = float(dlg.tcSigmaY.GetValue())
+            #peak rotation angle
+            angle = float(dlg.tcAngle.GetValue())
+            #RSM scale and background values
+            scale = float(dlg.tcScale.GetValue())
+            background = float(dlg.tcBackground.GetValue())
+            #create peak
+            peak = RSMPeak(name, pos_x, pos_y, sigma_x, sigma_y, angle, scale, background)
+            
+            # transform angles to reciprocal points
+            [qx,qy,qz] = self.hxrd.Ang2Q(self.omega,self.ttheta,delta=[0.0, 0.0])
+            peak.Fit(qy,qz, self.intensity, [0.1, 0.1])
 # end of class MplPanel
