@@ -11,6 +11,8 @@ from matplotlib.widgets import Cursor
 
 import xrayutilities as xu
 
+from PeakFitDialog import PeakFitDialog
+
 # begin wxGlade: dependencies
 # end wxGlade
 
