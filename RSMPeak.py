@@ -28,7 +28,12 @@ class RSMPeak:
         xmax = self.pos_x + range_x / 2
         ymin = self.pos_y - range_y / 2
         ymax = self.pos_y + range_y / 2
-        
+
+        print "pos:", self.pos_x, self.pos_y
+        print "sigma:", self.sigma_x, self.sigma_y
+        print "sc, bg, ang", self.scale, self.background, self.angle
+        print "ranges:", xmin, xmax, ymin, ymax
+
         #xrayutilities fit function
         fitparams, self.covariance = xu.math.fit.fit_peak2d(x, y, z, 
                     [self.pos_x, self.pos_y, self.sigma_x, self.sigma_y, self.scale, self.background, self.angle], 
