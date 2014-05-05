@@ -17,19 +17,19 @@ class PeakFitDialog(wx.Dialog):
         kwds["style"] = wx.DEFAULT_DIALOG_STYLE
         wx.Dialog.__init__(self, *args, **kwds)
         self.lbName = wx.StaticText(self, -1, "Peak name")
-        self.tcPeakName = wx.TextCtrl(self, -1, "")
+        self.tcPeakName = wx.TextCtrl(self, -1, "", style=wx.TE_CENTRE)
         self.lbPosition = wx.StaticText(self, -1, "Position")
-        self.tcPositionX = wx.TextCtrl(self, -1, "")
-        self.tcPositionY = wx.TextCtrl(self, -1, "")
+        self.tcPositionX = wx.TextCtrl(self, -1, "", style=wx.TE_CENTRE)
+        self.tcPositionY = wx.TextCtrl(self, -1, "", style=wx.TE_CENTRE)
         self.lbWidth = wx.StaticText(self, -1, "Widths")
-        self.tcSigmaX = wx.TextCtrl(self, -1, "")
-        self.tcSigmaY = wx.TextCtrl(self, -1, "")
+        self.tcSigmaX = wx.TextCtrl(self, -1, "0.001", style=wx.TE_CENTRE)
+        self.tcSigmaY = wx.TextCtrl(self, -1, "0.001", style=wx.TE_CENTRE)
         self.lbAngle = wx.StaticText(self, -1, "Angle")
-        self.tcAngle = wx.TextCtrl(self, -1, "")
+        self.tcAngle = wx.TextCtrl(self, -1, "0.000", style=wx.TE_CENTRE)
         self.lbScale = wx.StaticText(self, -1, "Scale")
-        self.tcScale = wx.TextCtrl(self, -1, "")
+        self.tcScale = wx.TextCtrl(self, -1, "1.000", style=wx.TE_CENTRE)
         self.lbBackground = wx.StaticText(self, -1, "Background")
-        self.tcBackground = wx.TextCtrl(self, -1, "")
+        self.tcBackground = wx.TextCtrl(self, -1, "0.000", style=wx.TE_CENTRE)
         self.bCancel = wx.Button(self, wx.ID_CANCEL, "Cancel")
         self.bApply = wx.Button(self, wx.ID_APPLY, "Apply")
         self.bOK = wx.Button(self, wx.ID_OK, "OK")
@@ -45,6 +45,7 @@ class PeakFitDialog(wx.Dialog):
         self.lbPosition.SetMinSize((70, 19))
         self.lbWidth.SetMinSize((70, 19))
         self.lbAngle.SetMinSize((70, 19))
+        self.tcAngle.SetToolTipString("Rotation angle in degrees")
         self.lbScale.SetMinSize((100, 19))
         self.lbBackground.SetMinSize((100, 19))
         # end wxGlade
@@ -96,5 +97,14 @@ class PeakFitDialog(wx.Dialog):
         sizer_11.Fit(self)
         self.Layout()
         # end wxGlade
+        
+    def SetPeakPosition(self, x, y):
+        """displays peak position in the corresponding text controls"""
+        self.tcPositionX.SetValue("%.4f" % x)
+        self.tcPositionY.SetValue("%.4f" % y)
+        
+    def SetPeakName(self, name):
+        """displays peak title in the corresponding text controls"""
+        self.tcPeakName.SetValue(name)
 
 # end of class PeakFitDialog

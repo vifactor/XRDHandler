@@ -241,5 +241,12 @@ class MplPanel(wx.Panel):
         
     def onLeftClick(self, event):
         self.unset_cursor()
-        print event.xdata, event.ydata
+        
+        dlg = PeakFitDialog(self)
+        #set position text controls equal to position of the mouse click
+        dlg.SetPeakPosition(event.xdata, event.ydata)
+        #set peak name
+        dlg.SetPeakName("Peak 1")
+        if dlg.ShowModal() == wx.ID_OK:
+            print "Data fitting..."
 # end of class MplPanel
