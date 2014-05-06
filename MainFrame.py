@@ -68,8 +68,8 @@ class MainFrame(wx.Frame):
     def __do_layout(self):
         # begin wxGlade: MainFrame.__do_layout
         sizer_1 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_1.Add(self.mplPanel, 1, wx.ALL | wx.EXPAND, 5)
-        sizer_1.Add(self.stgPanel, 0, wx.ALL, 5)
+        sizer_1.Add(self.mplPanel, 2, wx.ALL | wx.EXPAND, 5)
+        sizer_1.Add(self.stgPanel, 1, wx.ALL | wx.EXPAND, 5)
         self.SetSizer(sizer_1)
         sizer_1.Fit(self)
         self.Layout()

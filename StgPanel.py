@@ -45,6 +45,8 @@ class StgPanel(wx.Panel):
         self.Bind(wx.EVT_BUTTON, self.onFit, self.bFit)
         self.Bind(wx.EVT_BUTTON, self.onPeakAdd, id=wx.ID_ADD)
         # end wxGlade
+        
+        self.__set_list_ctrl_properties()
 
     def __set_properties(self):
         # begin wxGlade: StgPanel.__set_properties
@@ -96,6 +98,14 @@ class StgPanel(wx.Panel):
         self.SetSizer(sizer_3)
         sizer_3.Fit(self)
         # end wxGlade
+        
+    def __set_list_ctrl_properties(self):
+        self.lcPeaks.InsertColumn(0, 'Peak')
+        self.lcPeaks.InsertColumn(1, 'x')
+        self.lcPeaks.InsertColumn(2, 'y')
+        self.lcPeaks.InsertColumn(3, 'sigma x')
+        self.lcPeaks.InsertColumn(4, 'sigma y')
+        self.lcPeaks.InsertColumn(5, 'phi')
 
     def OnViewModeSelect(self, event):  # wxGlade: StgPanel.<event_handler>
         frame = self.GetParent()
