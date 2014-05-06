@@ -28,7 +28,6 @@ class StgPanel(wx.Panel):
         self.stYRange = wx.StaticText(self, -1, "Y range")
         self.tcYMin = wx.TextCtrl(self, -1, "", style=wx.TE_PROCESS_ENTER)
         self.tcYMax = wx.TextCtrl(self, -1, "", style=wx.TE_PROCESS_ENTER)
-        self.bFit = wx.Button(self, -1, "Fit")
         self.bAddPeak = wx.Button(self, wx.ID_ADD, "Add peak")
         self.lcPeaks = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
 
@@ -42,7 +41,6 @@ class StgPanel(wx.Panel):
         self.Bind(wx.EVT_TEXT_ENTER, self.OnXMaxChange, self.tcXMax)
         self.Bind(wx.EVT_TEXT_ENTER, self.OnYMinChange, self.tcYMin)
         self.Bind(wx.EVT_TEXT_ENTER, self.OnYMaxChange, self.tcYMax)
-        self.Bind(wx.EVT_BUTTON, self.onFit, self.bFit)
         self.Bind(wx.EVT_BUTTON, self.onPeakAdd, id=wx.ID_ADD)
         # end wxGlade
         
@@ -58,14 +56,12 @@ class StgPanel(wx.Panel):
         self.tcXMax.Enable(False)
         self.tcYMin.Enable(False)
         self.tcYMax.Enable(False)
-        self.bFit.Hide()
         # end wxGlade
 
     def __do_layout(self):
         # begin wxGlade: StgPanel.__do_layout
         sizer_3 = wx.BoxSizer(wx.VERTICAL)
         sizer_14 = wx.BoxSizer(wx.VERTICAL)
-        sizer_10 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_5 = wx.BoxSizer(wx.VERTICAL)
         sizer_8 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_7 = wx.BoxSizer(wx.HORIZONTAL)
@@ -90,8 +86,6 @@ class StgPanel(wx.Panel):
         sizer_8.Add(self.tcYMax, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL, 0)
         sizer_5.Add(sizer_8, 0, wx.EXPAND, 0)
         sizer_3.Add(sizer_5, 0, wx.EXPAND, 0)
-        sizer_10.Add(self.bFit, 0, 0, 0)
-        sizer_3.Add(sizer_10, 0, wx.EXPAND, 0)
         sizer_14.Add(self.bAddPeak, 0, wx.ALIGN_RIGHT | wx.ALIGN_BOTTOM, 0)
         sizer_14.Add(self.lcPeaks, 1, wx.EXPAND, 0)
         sizer_3.Add(sizer_14, 1, wx.EXPAND, 0)
@@ -194,7 +188,6 @@ class StgPanel(wx.Panel):
             self.tcYMin.Enable(False)
             self.tcYMax.Enable(False)
             
-            self.bFit.Hide()
             frame.mplPanel.unset_cursor()
         elif mode == 1:
             self.tcX0.SetValue("%s" % frame.mplPanel.Q0x)
@@ -215,9 +208,6 @@ class StgPanel(wx.Panel):
             self.tcYMin.Enable(False)
             self.tcYMax.Enable(False)
             
-            self.bFit.Show()
-            
-            self.__do_layout()
         else: #mode == 2:
             #print central point in the corresponding TextControls
             self.tcX0.SetValue("%s" % frame.mplPanel.Q0x)
@@ -239,15 +229,14 @@ class StgPanel(wx.Panel):
             self.tcYMin.Enable(True)
             self.tcYMax.Enable(True)
             
-            self.bFit.Hide()
             frame.mplPanel.unset_cursor()
 
     def onFit(self, event):  # wxGlade: StgPanel.<event_handler>
-        frame = self.GetParent()
-        frame.mplPanel.set_cursor()
+        print "Event handler `onFit' not implemented"
+        event.Skip()
 
     def onPeakAdd(self, event):  # wxGlade: StgPanel.<event_handler>
-        print "Event handler `onPeakAdd' not implemented"
-        event.Skip()
+        frame = self.GetParent()
+        frame.mplPanel.set_cursor()
 
 # end of class StgPanel
