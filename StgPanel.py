@@ -56,6 +56,7 @@ class StgPanel(wx.Panel):
         self.tcXMax.Enable(False)
         self.tcYMin.Enable(False)
         self.tcYMax.Enable(False)
+        self.bAddPeak.Enable(False)
         # end wxGlade
 
     def __do_layout(self):
@@ -169,6 +170,7 @@ class StgPanel(wx.Panel):
         frame = self.GetParent()
         
         self.cbMode.Enable(True)
+        self.bAddPeak.Enable(True)
         if mode == 0:
             self.tcX0.SetValue("%s" % frame.mplPanel.omega0)
             self.tcY0.SetValue("%s" % frame.mplPanel.ttheta0)
@@ -231,11 +233,13 @@ class StgPanel(wx.Panel):
             
             frame.mplPanel.unset_cursor()
 
-    def onFit(self, event):  # wxGlade: StgPanel.<event_handler>
-        print "Event handler `onFit' not implemented"
-        event.Skip()
-
     def onPeakAdd(self, event):  # wxGlade: StgPanel.<event_handler>
+        #we fit peak only in Q-mode
+        mode = 1
+        self.cbMode.SetSelection(mode)
+        self.updateFigure(mode)
+        self.updateControls(mode)
+    
         frame = self.GetParent()
         frame.mplPanel.set_cursor()
 
