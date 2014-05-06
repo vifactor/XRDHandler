@@ -199,6 +199,8 @@ class StgPanel(wx.Panel):
             self.tcYMax.Enable(False)
             
             self.bFit.Show()
+            
+            self.__do_layout()
         else: #mode == 2:
             #print central point in the corresponding TextControls
             self.tcX0.SetValue("%s" % frame.mplPanel.Q0x)
