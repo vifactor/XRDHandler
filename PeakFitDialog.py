@@ -39,6 +39,7 @@ class PeakFitDialog(wx.Dialog):
         self.__do_layout()
 
         self.Bind(wx.EVT_BUTTON, self.onApply, id=wx.ID_APPLY)
+        self.Bind(wx.EVT_BUTTON, self.onOK, id=wx.ID_OK)
         # end wxGlade
 
     def __set_properties(self):
@@ -159,4 +160,9 @@ class PeakFitDialog(wx.Dialog):
         self.UpdateControls()
         #3) TODO display scans in the dialog
     
+    def onOK(self, event):  # wxGlade: PeakFitDialog.<event_handler>
+        #0) set peak initial parameters
+        self.UpdatePeak()
+        event.Skip()
+
 # end of class PeakFitDialog

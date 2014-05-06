@@ -242,5 +242,8 @@ class StgPanel(wx.Panel):
     
         frame = self.GetParent()
         frame.mplPanel.set_cursor()
+    
+    def addPeak(self, peak):
+        self.lcPeaks.Append(peak.toList())
 
 # end of class StgPanel

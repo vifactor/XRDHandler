@@ -253,10 +253,7 @@ class MplPanel(wx.Panel):
         if dlg.ShowModal() == wx.ID_OK:
             #get peak from dialog
             peak = dlg.GetPeak()
-            # TODO display peak in a list
             
-            #print peak
-            print "pos:\t", peak.pos_x, peak.pos_y
-            print "sigma:\t", peak.sigma_x, peak.sigma_y
+            self.GetParent().stgPanel.addPeak(peak)
             
 # end of class MplPanel
