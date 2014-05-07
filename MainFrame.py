@@ -103,7 +103,7 @@ class MainFrame(wx.Frame):
 
     def OnAbout(self, event):  # wxGlade: MainFrame.<event_handler>
         #Create a message dialog box
-        dlg = wx.MessageDialog(self, "RSM Handler v0.62", "XRD", wx.OK)
+        dlg = wx.MessageDialog(self, "RSM Handler v0.7", "XRD", wx.OK)
         dlg.ShowModal()
         dlg.Destroy()
 
