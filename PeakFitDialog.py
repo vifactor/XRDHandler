@@ -37,10 +37,10 @@ class PeakFitDialog(wx.Dialog):
         self.tcBackground = wx.TextCtrl(self, -1, "0.000", style=wx.TE_CENTRE)
         self.static_line_1 = wx.StaticLine(self, -1)
         self.label_1 = wx.StaticText(self, -1, "Fit data range", style=wx.ALIGN_RIGHT)
-        self.label_2 = wx.StaticText(self, -1, "X range")
-        self.tcXRange = wx.TextCtrl(self, -1, "0.1", style=wx.TE_CENTRE)
-        self.tcYRange = wx.StaticText(self, -1, "Y Range")
-        self.text_ctrl_2 = wx.TextCtrl(self, -1, "0.1", style=wx.TE_CENTRE)
+        self.lbXRange = wx.StaticText(self, -1, "X range")
+        self.tcXRange = wx.TextCtrl(self, -1, "0.1", style=wx.TE_PROCESS_ENTER | wx.TE_PROCESS_TAB | wx.TE_CENTRE)
+        self.lbYRange = wx.StaticText(self, -1, "Y Range")
+        self.tcYRange = wx.TextCtrl(self, -1, "0.1", style=wx.TE_PROCESS_ENTER | wx.TE_PROCESS_TAB | wx.TE_CENTRE)
         self.static_line_3 = wx.StaticLine(self, -1)
         self.bCancel = wx.Button(self, wx.ID_CANCEL, "Cancel")
         self.bApply = wx.Button(self, wx.ID_APPLY, "Apply")
@@ -51,6 +51,8 @@ class PeakFitDialog(wx.Dialog):
         self.__set_properties()
         self.__do_layout()
 
+        self.Bind(wx.EVT_TEXT_ENTER, self.onXRange, self.tcXRange)
+        self.Bind(wx.EVT_TEXT_ENTER, self.onYRange, self.tcYRange)
         self.Bind(wx.EVT_BUTTON, self.onApply, id=wx.ID_APPLY)
         self.Bind(wx.EVT_BUTTON, self.onOK, id=wx.ID_OK)
         # end wxGlade
@@ -117,10 +119,10 @@ class PeakFitDialog(wx.Dialog):
         sizer_13.Add(sizer_23, 0, wx.TOP | wx.EXPAND, 10)
         sizer_15.Add(self.static_line_1, 0, wx.EXPAND, 0)
         sizer_15.Add(self.label_1, 0, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 5)
-        sizer_16.Add(self.label_2, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 0)
+        sizer_16.Add(self.lbXRange, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 0)
         sizer_16.Add(self.tcXRange, 0, wx.ALL, 5)
-        sizer_16.Add(self.tcYRange, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 0)
-        sizer_16.Add(self.text_ctrl_2, 0, wx.ALL, 5)
+        sizer_16.Add(self.lbYRange, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 0)
+        sizer_16.Add(self.tcYRange, 0, wx.ALL, 5)
         sizer_15.Add(sizer_16, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 0)
         sizer_15.Add(self.static_line_3, 0, wx.EXPAND, 0)
         sizer_13.Add(sizer_15, 0, wx.TOP | wx.EXPAND | wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 30)
@@ -168,8 +170,8 @@ class PeakFitDialog(wx.Dialog):
         self.y = y
         self.z = z
         
-        self.xrange = 0.3
-        self.yrange = 0.3
+        self.UpdateXRange()
+        self.UpdateYRange()
         
     def UpdateControls(self):
         """display values in text controls of the dialog"""
@@ -195,15 +197,36 @@ class PeakFitDialog(wx.Dialog):
         #2) display new parameters in the dialog
         self.UpdateControls()
         #3) display scans in the dialog
-        self.DisplayScans()
+        self.UpdateScans()
+        self.canvas.draw()
         
     def onOK(self, event):  # wxGlade: PeakFitDialog.<event_handler>
         #0) set peak initial parameters
         self.UpdatePeak()
         event.Skip()
     
-    def DisplayScans(self):
+    def UpdateScans(self):
         pass
+
+    def onXRange(self, event):  # wxGlade: PeakFitDialog.<event_handler>
+        self.UpdateXRange()
+        self.canvas.draw()
+
+    def onYRange(self, event):  # wxGlade: PeakFitDialog.<event_handler>
+        self.UpdateYRange()
+        self.canvas.draw()
         
+    def UpdateXRange(self):
+        self.xrange = float(self.tcXRange.GetValue())
+        xmin = self.peak.pos_x - self.xrange / 2
+        xmax = self.peak.pos_x + self.xrange / 2
+        self.axes_qx.set_xlim(xmin, xmax)
+        
+    def UpdateYRange(self):
+        self.yrange = float(self.tcYRange.GetValue())
+        xmin = self.peak.pos_y - self.yrange / 2
+        xmax = self.peak.pos_y + self.yrange / 2
+        self.axes_qz.set_xlim(xmin, xmax)
+    
 
 # end of class PeakFitDialog
