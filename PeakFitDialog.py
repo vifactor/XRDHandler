@@ -29,11 +29,11 @@ class PeakFitDialog(wx.Dialog):
         self.lbWidth = wx.StaticText(self, -1, "Widths")
         self.tcSigmaX = wx.TextCtrl(self, -1, "0.001", style=wx.TE_CENTRE)
         self.tcSigmaY = wx.TextCtrl(self, -1, "0.001", style=wx.TE_CENTRE)
-        self.lbAngle = wx.StaticText(self, -1, "Angle")
+        self.lbAngle = wx.StaticText(self, -1, "Angle", style=wx.ALIGN_RIGHT)
         self.tcAngle = wx.TextCtrl(self, -1, "0.000", style=wx.TE_CENTRE)
         self.lbScale = wx.StaticText(self, -1, "Scale")
         self.tcScale = wx.TextCtrl(self, -1, "1.000", style=wx.TE_CENTRE)
-        self.lbBackground = wx.StaticText(self, -1, "Background")
+        self.lbBackground = wx.StaticText(self, -1, "Background", style=wx.ALIGN_RIGHT)
         self.tcBackground = wx.TextCtrl(self, -1, "0.000", style=wx.TE_CENTRE)
         self.static_line_1 = wx.StaticLine(self, -1)
         self.label_1 = wx.StaticText(self, -1, "Fit data range", style=wx.ALIGN_RIGHT)
@@ -41,6 +41,7 @@ class PeakFitDialog(wx.Dialog):
         self.tcXRange = wx.TextCtrl(self, -1, "0.1", style=wx.TE_CENTRE)
         self.tcYRange = wx.StaticText(self, -1, "Y Range")
         self.text_ctrl_2 = wx.TextCtrl(self, -1, "0.1", style=wx.TE_CENTRE)
+        self.static_line_3 = wx.StaticLine(self, -1)
         self.bCancel = wx.Button(self, wx.ID_CANCEL, "Cancel")
         self.bApply = wx.Button(self, wx.ID_APPLY, "Apply")
         self.bOK = wx.Button(self, wx.ID_OK, "OK")
@@ -53,23 +54,30 @@ class PeakFitDialog(wx.Dialog):
         self.Bind(wx.EVT_BUTTON, self.onApply, id=wx.ID_APPLY)
         self.Bind(wx.EVT_BUTTON, self.onOK, id=wx.ID_OK)
         # end wxGlade
+        
+        #add axes to display qx and qz scans to the figure
+        self.axes_qx = self.figure.add_subplot(211)
+        self.axes_qz = self.figure.add_subplot(212)
 
     def __set_properties(self):
         # begin wxGlade: PeakFitDialog.__set_properties
         self.SetTitle("Fit peak")
-        self.SetSize((800, 340))
+        self.SetSize((872, 364))
         self.tcPeakName.SetMinSize((150, 29))
         self.lbPosition.SetMinSize((70, 19))
         self.lbWidth.SetMinSize((70, 19))
-        self.lbAngle.SetMinSize((70, 19))
+        self.lbAngle.SetMinSize((100, 19))
         self.tcAngle.SetToolTipString("Rotation angle in degrees")
-        self.lbScale.SetMinSize((100, 19))
+        self.lbScale.SetMinSize((70, 19))
         self.lbBackground.SetMinSize((100, 19))
+        self.canvas.SetMinSize((330, 330))
+        self.canvas.SetBackgroundColour(wx.Colour(219, 219, 112))
         # end wxGlade
 
     def __do_layout(self):
         # begin wxGlade: PeakFitDialog.__do_layout
         sizer_10 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_17 = wx.BoxSizer(wx.VERTICAL)
         sizer_11 = wx.BoxSizer(wx.VERTICAL)
         sizer_12 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_13 = wx.BoxSizer(wx.VERTICAL)
@@ -95,18 +103,18 @@ class PeakFitDialog(wx.Dialog):
         sizer_26.Add(self.tcSigmaX, 0, 0, 0)
         sizer_26.Add(self.tcSigmaY, 0, 0, 0)
         sizer_24.Add(sizer_26, 1, wx.EXPAND, 0)
-        sizer_22.Add(sizer_24, 1, wx.ALL | wx.EXPAND, 10)
-        sizer_27.Add(self.lbAngle, 0, wx.ALIGN_CENTER_VERTICAL, 0)
+        sizer_22.Add(sizer_24, 1, wx.ALL, 5)
+        sizer_27.Add(self.lbAngle, 0, wx.RIGHT | wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL, 5)
         sizer_27.Add(self.tcAngle, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL, 0)
-        sizer_22.Add(sizer_27, 1, wx.ALL | wx.EXPAND, 10)
-        sizer_13.Add(sizer_22, 1, wx.EXPAND, 0)
+        sizer_22.Add(sizer_27, 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
+        sizer_13.Add(sizer_22, 0, wx.TOP | wx.EXPAND, 10)
         sizer_29.Add(self.lbScale, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 0)
         sizer_29.Add(self.tcScale, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 0)
-        sizer_23.Add(sizer_29, 1, wx.ALL | wx.EXPAND, 10)
-        sizer_30.Add(self.lbBackground, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 0)
+        sizer_23.Add(sizer_29, 1, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 5)
+        sizer_30.Add(self.lbBackground, 0, wx.RIGHT | wx.ALIGN_CENTER_VERTICAL, 5)
         sizer_30.Add(self.tcBackground, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 0)
-        sizer_23.Add(sizer_30, 1, wx.ALL | wx.EXPAND, 10)
-        sizer_13.Add(sizer_23, 1, wx.EXPAND, 0)
+        sizer_23.Add(sizer_30, 0, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 5)
+        sizer_13.Add(sizer_23, 0, wx.TOP | wx.EXPAND, 10)
         sizer_15.Add(self.static_line_1, 0, wx.EXPAND, 0)
         sizer_15.Add(self.label_1, 0, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 5)
         sizer_16.Add(self.label_2, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 0)
@@ -114,16 +122,18 @@ class PeakFitDialog(wx.Dialog):
         sizer_16.Add(self.tcYRange, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 0)
         sizer_16.Add(self.text_ctrl_2, 0, wx.ALL, 5)
         sizer_15.Add(sizer_16, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 0)
-        sizer_13.Add(sizer_15, 0, wx.EXPAND, 0)
-        sizer_11.Add(sizer_13, 1, wx.EXPAND, 0)
-        sizer_12.Add((150, 30), 0, 0, 0)
-        sizer_12.Add(self.bCancel, 0, 0, 0)
-        sizer_12.Add(self.bApply, 0, 0, 0)
-        sizer_12.Add(self.bOK, 0, 0, 0)
-        sizer_11.Add(sizer_12, 0, wx.EXPAND, 0)
-        sizer_10.Add(sizer_11, 2, 0, 0)
+        sizer_15.Add(self.static_line_3, 0, wx.EXPAND, 0)
+        sizer_13.Add(sizer_15, 0, wx.TOP | wx.EXPAND | wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 30)
+        sizer_11.Add(sizer_13, 1, 0, 0)
+        sizer_12.Add((120, 25), 0, wx.ALIGN_RIGHT | wx.ALIGN_BOTTOM, 0)
+        sizer_12.Add(self.bCancel, 0, wx.ALIGN_BOTTOM, 0)
+        sizer_12.Add(self.bApply, 0, wx.ALIGN_RIGHT | wx.ALIGN_BOTTOM, 0)
+        sizer_12.Add(self.bOK, 0, wx.ALIGN_RIGHT | wx.ALIGN_BOTTOM, 0)
+        sizer_11.Add(sizer_12, 0, wx.ALIGN_BOTTOM, 0)
+        sizer_10.Add(sizer_11, 0, wx.EXPAND, 0)
         sizer_10.Add(self.static_line_2, 0, wx.EXPAND, 0)
-        sizer_10.Add(self.canvas, 1, wx.ALL | wx.EXPAND, 10)
+        sizer_17.Add(self.canvas, 1, wx.ALL | wx.EXPAND, 10)
+        sizer_10.Add(sizer_17, 1, wx.EXPAND, 0)
         self.SetSizer(sizer_10)
         self.Layout()
         # end wxGlade
@@ -184,11 +194,16 @@ class PeakFitDialog(wx.Dialog):
         self.peak.Fit(self.x,self.y, self.z, [self.xrange, self.yrange])
         #2) display new parameters in the dialog
         self.UpdateControls()
-        #3) TODO display scans in the dialog
-    
+        #3) display scans in the dialog
+        self.DisplayScans()
+        
     def onOK(self, event):  # wxGlade: PeakFitDialog.<event_handler>
         #0) set peak initial parameters
         self.UpdatePeak()
         event.Skip()
+    
+    def DisplayScans(self):
+        pass
+        
 
 # end of class PeakFitDialog
