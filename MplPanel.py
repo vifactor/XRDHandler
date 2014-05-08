@@ -25,6 +25,8 @@ class MplPanel(wx.Panel):
     def __init__(self, *args, **kwds):
         # matplotlib figure
         self.figure = Figure()
+        self.axes = self.figure.add_subplot(111)
+        self.colorbar = None
         
         # begin wxGlade: MplPanel.__init__
         kwds["style"] = wx.TAB_TRAVERSAL
@@ -99,9 +101,7 @@ class MplPanel(wx.Panel):
         INT = xu.maplog(gridder.data.transpose(),6,0)
 
         #clear axes from previous drawing
-        self.figure.clf()
-        #add subplot to the figure
-        self.axes = self.figure.add_subplot(111)
+        self.axes.cla()
         #draw rsm
         cf = self.axes.contourf(gridder.xaxis, gridder.yaxis,INT,100,extend='min')
         #draw center
@@ -109,9 +109,16 @@ class MplPanel(wx.Panel):
         #annotate axes
         self.axes.set_xlabel(r'$\omega$ (deg)')
         self.axes.set_ylabel(r'$2\theta$ (deg)')
-        # draw colorbar
-        self.figure.colorbar(cf, ax = self.axes)
-        #draw figure
+        # update colorbar
+        if not self.colorbar:
+            self.colorbar = self.figure.colorbar(cf, ax = self.axes)
+        else:
+            #TODO setup user defined values for cmin and cmax
+            #self.colorbar.set_clim(-10, 20)
+            
+            self.colorbar.update_normal(cf)
+            self.colorbar.draw_all()
+        #redraw figure
         self.figure.canvas.draw()
 
     def drawReciprocalMap_Q(self):
@@ -122,9 +129,7 @@ class MplPanel(wx.Panel):
         INT = xu.maplog(gridder.data.transpose(),6,0)
         
         #clear axes from previous drawing
-        self.figure.clf()
-        #add subplot to the figure
-        self.axes = self.figure.add_subplot(111)
+        self.axes.cla()
         #draw rsm
         cf = self.axes.contourf(gridder.xaxis, gridder.yaxis,INT,100,extend='min')
         #draw center
@@ -133,9 +138,14 @@ class MplPanel(wx.Panel):
         #annotate axis
         self.axes.set_xlabel(r'$Q_{[110]}$ ($\AA^{-1}$)')
         self.axes.set_ylabel(r'$Q_{[001]}$ ($\AA^{-1}$)')
-        # draw colorbar
-        self.figure.colorbar(cf, ax = self.axes)
-        #draw figure
+        
+        # update colorbar
+        if not self.colorbar:
+            self.colorbar = self.figure.colorbar(cf, ax = self.axes)
+        else:
+            self.colorbar.update_normal(cf)
+            self.colorbar.draw_all()
+        #redraw figure
         self.figure.canvas.draw()
         
     def drawReciprocalMap_q(self):
@@ -146,9 +156,7 @@ class MplPanel(wx.Panel):
         INT = xu.maplog(gridder.data.transpose(),6,0)
         
         #clear axes from previous drawing
-        self.figure.clf()
-        #add subplot to the figure
-        self.axes = self.figure.add_subplot(111)
+        self.axes.cla()
         #draw rsm
         cf = self.axes.contourf(gridder.xaxis, gridder.yaxis,INT,100,extend='min')
         #draw center, in this mode center is always at zero point
@@ -158,8 +166,11 @@ class MplPanel(wx.Panel):
         self.axes.set_xlabel(r'$q_{[110]}$ ($\AA^{-1}$)')
         self.axes.set_ylabel(r'$q_{[001]}$ ($\AA^{-1}$)')
         
-        # draw colorbar
-        self.figure.colorbar(cf, ax = self.axes)
+        if not self.colorbar:
+            self.colorbar = self.figure.colorbar(cf, ax = self.axes)
+        else:
+            self.colorbar.update_normal(cf)
+            self.colorbar.draw_all()
         #draw figure
         self.figure.canvas.draw()
         

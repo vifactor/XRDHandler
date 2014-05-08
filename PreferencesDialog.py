@@ -74,11 +74,19 @@ class PreferencesDialog(wx.Dialog):
         self.tcHeight.SetValue("%.2f" % figure.get_figheight())
         self.tcDPI.SetValue("%d" % figure.get_dpi())
         
+        ar = figure.gca().get_aspect()
+        #aspect ratio can be a string
+        if isinstance(ar, basestring):
+            self.tcAxesRatio.SetValue("%s" % ar)
+        else:
+            self.tcAxesRatio.SetValue("%.2f" % ar)
+        
     def UpdateFigure(self, figure):
         """sets up the figure-argument according to input values"""
         figure.set_figwidth(float(self.tcWidth.GetValue()))
         figure.set_figheight(float(self.tcHeight.GetValue()))
         figure.set_dpi(int(self.tcDPI.GetValue()))
+        figure.gca().set_aspect(float(self.tcAxesRatio.GetValue()))
         
         figure.canvas.draw()
         
