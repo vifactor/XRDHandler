@@ -18,15 +18,15 @@ class PreferencesDialog(wx.Dialog):
         wx.Dialog.__init__(self, *args, **kwds)
         self.label_2 = wx.StaticText(self, -1, "Figure")
         self.lbWidth = wx.StaticText(self, -1, "Width")
-        self.tcWidth = wx.TextCtrl(self, -1, "")
+        self.tcWidth = wx.TextCtrl(self, -1, "", style=wx.TE_CENTRE)
         self.lbHeight = wx.StaticText(self, -1, "Height")
-        self.tcHeight = wx.TextCtrl(self, -1, "")
+        self.tcHeight = wx.TextCtrl(self, -1, "", style=wx.TE_CENTRE)
         self.lbDPI = wx.StaticText(self, -1, "dpi")
-        self.tcDPI = wx.TextCtrl(self, -1, "")
+        self.tcDPI = wx.TextCtrl(self, -1, "", style=wx.TE_CENTRE)
         self.lbAxesRatio = wx.StaticText(self, -1, "Axes ratio")
-        self.tcAxesRatio = wx.TextCtrl(self, -1, "")
+        self.tcAxesRatio = wx.TextCtrl(self, -1, "", style=wx.TE_CENTRE)
         self.bCancel = wx.Button(self, wx.ID_CANCEL, "Cancel")
-        self.bOK = wx.Button(self, wx.ID_CANCEL, "OK")
+        self.bOK = wx.Button(self, wx.ID_OK, "OK")
 
         self.__set_properties()
         self.__do_layout()
@@ -36,6 +36,9 @@ class PreferencesDialog(wx.Dialog):
         # begin wxGlade: PreferencesDialog.__set_properties
         self.SetTitle("Preferences")
         self.label_2.SetFont(wx.Font(14, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.tcWidth.SetToolTipString("Figure width in inches")
+        self.tcHeight.SetToolTipString("Figure height in inches")
+        self.tcDPI.SetToolTipString("Pixels per inch")
         # end wxGlade
 
     def __do_layout(self):
@@ -64,5 +67,20 @@ class PreferencesDialog(wx.Dialog):
         sizer_18.Fit(self)
         self.Layout()
         # end wxGlade
+    
+    def UpdateControls(self, figure):
+        """displays controls of the dialog according to settings of the figure-argument"""
+        self.tcWidth.SetValue("%.2f" % figure.get_figwidth())
+        self.tcHeight.SetValue("%.2f" % figure.get_figheight())
+        self.tcDPI.SetValue("%d" % figure.get_dpi())
+        
+    def UpdateFigure(self, figure):
+        """sets up the figure-argument according to input values"""
+        figure.set_figwidth(float(self.tcWidth.GetValue()))
+        figure.set_figheight(float(self.tcHeight.GetValue()))
+        figure.set_dpi(int(self.tcDPI.GetValue()))
+        
+        figure.canvas.draw()
+        
 
 # end of class PreferencesDialog

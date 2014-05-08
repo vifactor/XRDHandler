@@ -7,6 +7,8 @@ import xrayutilities as xu
 
 import os
 
+from PreferencesDialog import PreferencesDialog
+
 # begin wxGlade: dependencies
 from StgPanel import StgPanel
 from MplPanel import MplPanel
@@ -158,7 +160,9 @@ class MainFrame(wx.Frame):
         pass
 
     def onPreferences(self, event):  # wxGlade: MainFrame.<event_handler>
-        print "Event handler `onPreferences' not implemented"
-        event.Skip()
+        dlg = PreferencesDialog(self)
+        dlg.UpdateControls(self.mplPanel.figure)
+        if dlg.ShowModal() == wx.ID_OK:
+            dlg.UpdateFigure(self.mplPanel.figure)
 
 # end of class MainFrame
