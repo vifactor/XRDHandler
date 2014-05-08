@@ -37,6 +37,10 @@ class MainFrame(wx.Frame):
         wxglade_tmp_menu.AppendItem(self.Exit)
         self.menubar.Append(wxglade_tmp_menu, "File")
         wxglade_tmp_menu = wx.Menu()
+        self.Preferences = wx.MenuItem(wxglade_tmp_menu, wx.ID_PREFERENCES, "&Preferences", "Figure and axes preferences", wx.ITEM_NORMAL)
+        wxglade_tmp_menu.AppendItem(self.Preferences)
+        self.menubar.Append(wxglade_tmp_menu, "Settings")
+        wxglade_tmp_menu = wx.Menu()
         self.About = wx.MenuItem(wxglade_tmp_menu, wx.ID_ABOUT, "&About", "Information about this program", wx.ITEM_NORMAL)
         wxglade_tmp_menu.AppendItem(self.About)
         self.menubar.Append(wxglade_tmp_menu, "Help")
@@ -52,6 +56,7 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnOpen, self.Open)
         self.Bind(wx.EVT_MENU, self.OnSave, self.Save)
         self.Bind(wx.EVT_MENU, self.OnExit, self.Exit)
+        self.Bind(wx.EVT_MENU, self.onPreferences, self.Preferences)
         self.Bind(wx.EVT_MENU, self.OnAbout, self.About)
         # end wxGlade
 
@@ -151,5 +156,9 @@ class MainFrame(wx.Frame):
 
     def saveGpltDataFile(self, path, mode):
         pass
+
+    def onPreferences(self, event):  # wxGlade: MainFrame.<event_handler>
+        print "Event handler `onPreferences' not implemented"
+        event.Skip()
 
 # end of class MainFrame
